@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="verdeAgua">#47ABB2</color>
+    <color name="fondo">#B0BFC1</color>
+    <color name="fondoInicio">#AED6F1</color>
+    <color name="rojo">@android:color/holo_red_light</color>
+    <color name="amarillo">@android:color/holo_orange_light</color>
+    <color name="naranja">@android:color/holo_orange_dark</color>
+    <color name="verde">@android:color/holo_green_dark</color>
+    <color name="rojo_claro">#F39191</color>
+    <color name="amarillo_claro">#FFDA8F</color>
+    <color name="naranja_claro">#F8AD58</color>
+    <color name="azul_claro">#C5F2FD</color>
+    <color name="azul">#00AEEF</color>
+    <color name="azulBoton">@android:color/holo_blue_dark</color>
+    <color name="titulos">#FF000000</color>
+</resources>
