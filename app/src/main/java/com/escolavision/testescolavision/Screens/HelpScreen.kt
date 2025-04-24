@@ -1,3 +1,24 @@
+/**
+ * Pantalla de ayuda y soporte de EscolaVision.
+ * 
+ * Esta pantalla proporciona información completa de ayuda y soporte para los usuarios, incluyendo:
+ * - Preguntas frecuentes (FAQ)
+ * - Instrucciones de uso
+ * - Información de contacto
+ * - Detalles sobre la aplicación
+ * - Política de privacidad
+ * 
+ * Características principales:
+ * - Interfaz Material 3 con diseño estructurado por secciones
+ * - Menú lateral para navegación
+ * - Información organizada y fácil de leer
+ * - Acceso a recursos de ayuda
+ * 
+ * La pantalla sirve como centro de recursos y soporte para todos los usuarios
+ * de la aplicación, proporcionando respuestas a dudas comunes y
+ * facilitando el acceso a la información de contacto y soporte técnico.
+ */
+
 package com.escolavision.testescolavision.Screens
 
 import androidx.compose.foundation.background

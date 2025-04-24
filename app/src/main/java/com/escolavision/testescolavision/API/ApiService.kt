@@ -1,4 +1,27 @@
-package com.escolavision.testescolavision.API
+/**
+ * Interfaz principal que define la estructura de comunicación con el servidor backend de EscolaVision.
+ * 
+ * Este archivo contiene:
+ * 1. Definiciones de modelos de datos (data classes) para todas las entidades del sistema:
+ *    - Autenticación y usuarios
+ *    - Tests y preguntas
+ *    - Áreas de evaluación
+ *    - Centros educativos
+ *    - Intentos y resultados
+ * 
+ * 2. Interfaz ApiService que define todos los endpoints disponibles:
+ *    - Operaciones CRUD completas
+ *    - Gestión de sesiones de usuario
+ *    - Administración de tests
+ *    - Control de centros educativos
+ * 
+ * Utiliza:
+ * - Retrofit para llamadas HTTP
+ * - Moshi para serialización JSON
+ * - Respuestas tipadas para seguridad
+ */
+
+ package com.escolavision.testescolavision.API
 
 import com.squareup.moshi.JsonClass
 import retrofit2.Call

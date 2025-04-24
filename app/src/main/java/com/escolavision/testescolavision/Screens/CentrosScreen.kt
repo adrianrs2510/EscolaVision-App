@@ -1,4 +1,23 @@
-package com.escolavision.testescolavision.Screens
+/**
+ * Pantalla de información detallada del centro educativo en EscolaVision.
+ * 
+ * Esta pantalla muestra toda la información relevante del centro educativo, organizada en tres secciones:
+ * - Datos generales del centro (código, denominaciones)
+ * - Información de contacto (teléfonos)
+ * - Datos de localización (dirección, localidad, provincia)
+ * 
+ * Características principales:
+ * - Interfaz Material 3 con cards organizadas por categorías
+ * - Menú lateral para navegación
+ * - Carga dinámica de datos desde la API
+ * - Manejo de estados de carga
+ * - Visualización estructurada de la información
+ * 
+ * La pantalla proporciona una vista completa y organizada de todos los datos
+ * relevantes del centro educativo al que pertenece el usuario actual.
+ */
+
+ package com.escolavision.testescolavision.Screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*

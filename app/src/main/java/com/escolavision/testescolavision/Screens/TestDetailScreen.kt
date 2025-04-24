@@ -1,3 +1,26 @@
+/**
+ * Pantalla de realización de tests de EscolaVision.
+ * 
+ * Esta pantalla permite a los usuarios realizar tests específicos:
+ * - Visualización de preguntas del test
+ * - Sistema de respuestas mediante sliders (0-10)
+ * - Cálculo automático de resultados por áreas
+ * - Guardado de intentos en la base de datos
+ * 
+ * Características principales:
+ * - Interfaz Material 3 con diseño adaptativo
+ * - Sistema de actualización pull-to-refresh
+ * - Cálculo dinámico de resultados
+ * - Gestión de respuestas por pregunta
+ * - Integración con API para guardar resultados
+ * - Navegación a vista de resultados
+ * 
+ * La pantalla actúa como el núcleo de la evaluación,
+ * permitiendo a los usuarios responder preguntas y
+ * obtener resultados inmediatos de su desempeño
+ * en las diferentes áreas evaluadas.
+ */
+
 package com.escolavision.testescolavision.Screens
 
 import android.widget.Toast

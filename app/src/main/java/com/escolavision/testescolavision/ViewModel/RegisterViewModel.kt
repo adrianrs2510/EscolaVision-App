@@ -1,4 +1,27 @@
-package com.escolavision.testescolavision.ViewModel
+/**
+ * ViewModel para la gestión del proceso de registro en EscolaVision.
+ * 
+ * Esta clase maneja el estado y la lógica del registro de usuarios:
+ * - Gestión de datos personales (nombre, DNI, email, edad)
+ * - Control de tipo de usuario (Alumno/Profesor)
+ * - Gestión de imágenes de perfil
+ * - Búsqueda y selección de centros educativos
+ * - Filtros de ubicación geográfica
+ * 
+ * Características principales:
+ * - Estados observables con MutableState
+ * - Gestión de datos de registro
+ * - Control de selección de centro educativo
+ * - Manejo de imágenes URI
+ * - Filtros por comunidad, provincia y municipio
+ * - Validación de datos de usuario
+ * 
+ * El ViewModel actúa como intermediario entre la UI de registro
+ * y la capa de datos, manteniendo el estado de la información
+ * durante todo el proceso de registro de nuevos usuarios.
+ */
+
+ package com.escolavision.testescolavision.ViewModel
 import android.net.Uri
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel

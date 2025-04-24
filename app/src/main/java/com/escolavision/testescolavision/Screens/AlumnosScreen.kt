@@ -1,3 +1,24 @@
+/**
+ * Pantalla de gestión de alumnos de la aplicación EscolaVision.
+ * 
+ * Esta pantalla proporciona una interfaz completa para la gestión de alumnos, incluyendo:
+ * - Listado de alumnos con búsqueda en tiempo real
+ * - Funcionalidad CRUD completa (Crear, Leer, Actualizar, Eliminar)
+ * - Gestión de imágenes de perfil
+ * - Validación de datos de entrada
+ * 
+ * Características principales:
+ * - Interfaz de usuario con Material Design 3
+ * - Menú lateral para navegación
+ * - Sistema de búsqueda integrado
+ * - Gestión de estados con ViewModel
+ * - Manejo de permisos y roles de usuario
+ * - Integración con API REST para operaciones de base de datos
+ * 
+ * La pantalla es accesible solo para usuarios con permisos de administración
+ * y permite la gestión completa de la información de los alumnos del centro.
+ */
+
 package com.escolavision.testescolavision.Screens
 
 import android.content.Context

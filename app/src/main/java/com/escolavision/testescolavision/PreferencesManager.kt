@@ -1,4 +1,27 @@
-package com.escolavision.testescolavision
+/**
+ * Gestor de preferencias y datos de sesión de EscolaVision.
+ * 
+ * Esta clase maneja el almacenamiento persistente de datos del usuario:
+ * - Gestión de datos de inicio de sesión
+ * - Almacenamiento de ID y tipo de usuario
+ * - Control de estado de sesión
+ * - Preferencias de tema (claro/oscuro)
+ * - Datos del centro educativo
+ * - Estado de orientador
+ * 
+ * Características principales:
+ * - Uso de SharedPreferences para persistencia
+ * - Gestión segura de datos de sesión
+ * - Métodos de acceso y modificación de preferencias
+ * - Control de estado de autenticación
+ * 
+ * La clase actúa como capa de abstracción para el
+ * almacenamiento local de datos y preferencias del usuario,
+ * proporcionando una interfaz segura y consistente para
+ * el manejo de datos persistentes en la aplicación.
+ */
+
+ package com.escolavision.testescolavision
 
 import android.content.Context
 import android.content.SharedPreferences

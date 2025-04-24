@@ -1,4 +1,26 @@
-package com.escolavision.testescolavision.Screens
+/**
+ * Componente de navegación lateral (Drawer) de EscolaVision.
+ * 
+ * Este componente implementa el menú lateral de la aplicación y gestiona:
+ * - Navegación entre diferentes pantallas
+ * - Control de acceso basado en roles de usuario
+ * - Opciones específicas según tipo de usuario:
+ *   · Alumnos: Tests, Áreas, Perfil, Mi Centro, Resultados, Ayuda
+ *   · Profesores: Alumnos, Áreas, Perfil, Mi Centro, Resultados, Ayuda
+ *   · Invitados: Tests, Áreas, Perfil, Mi Centro, Ayuda
+ * 
+ * Características principales:
+ * - Interfaz Material 3 con diseño adaptativo
+ * - Gestión de estados del drawer
+ * - Control de sesión de usuario
+ * - Navegación condicional según permisos
+ * 
+ * El componente actúa como el hub principal de navegación,
+ * proporcionando acceso contextual a las diferentes
+ * funcionalidades de la aplicación según el rol del usuario.
+ */
+
+ package com.escolavision.testescolavision.Screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*

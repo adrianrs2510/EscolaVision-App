@@ -1,4 +1,26 @@
-package com.escolavision.testescolavision
+/**
+ * Utilidades generales de la aplicación EscolaVision.
+ * 
+ * Esta clase contiene funciones y componentes de utilidad:
+ * - Manejo y procesamiento de imágenes
+ * - Conversión de imágenes a formato Base64
+ * - Compresión adaptativa de imágenes
+ * - Componentes de UI reutilizables
+ * - Diálogos de alerta personalizados
+ * 
+ * Características principales:
+ * - Compresión inteligente de imágenes
+ * - Límites de tamaño configurables
+ * - Mantenimiento de proporción de aspecto
+ * - Componentes Composable para diálogos
+ * - Manejo de errores y excepciones
+ * 
+ * Este archivo actúa como una biblioteca de utilidades
+ * compartidas que proporciona funcionalidades comunes
+ * utilizadas en diferentes partes de la aplicación.
+ */
+
+ package com.escolavision.testescolavision
 
 import android.content.Context
 import android.graphics.Bitmap
@@ -16,8 +38,6 @@ import androidx.compose.ui.unit.dp
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.io.InputStream
-
-// Archivo de utilidades que contiene funciones auxiliares para la aplicación
 
 // Importaciones necesarias para el manejo de imágenes y componentes de UI
 

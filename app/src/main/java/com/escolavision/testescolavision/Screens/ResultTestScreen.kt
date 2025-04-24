@@ -1,4 +1,24 @@
-package com.escolavision.testescolavision.Screens
+/**
+ * Pantalla de visualización detallada de resultados de test en EscolaVision.
+ * 
+ * Esta pantalla muestra el desglose detallado de los resultados de un test específico:
+ * - Visualización de puntuaciones por área
+ * - Descripción detallada de cada área evaluada
+ * - Navegación contextual según la pantalla de origen
+ * 
+ * Características principales:
+ * - Interfaz Material 3 con diseño de tarjetas
+ * - Carga dinámica de información de áreas
+ * - Sistema de navegación adaptativo
+ * - Visualización detallada de resultados por área
+ * - Integración con la API para obtener descripciones de áreas
+ * 
+ * La pantalla actúa como vista detallada de resultados,
+ * permitiendo a los usuarios comprender en profundidad
+ * su desempeño en cada área evaluada del test.
+ */
+
+ package com.escolavision.testescolavision.Screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*

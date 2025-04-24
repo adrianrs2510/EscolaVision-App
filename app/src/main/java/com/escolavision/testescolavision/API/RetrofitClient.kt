@@ -1,4 +1,19 @@
-import com.escolavision.testescolavision.API.ApiService
+/**
+ * Cliente Retrofit para la comunicación con el servidor de EscolaVision.
+ * 
+ * Este archivo implementa un patrón Singleton para gestionar una única instancia
+ * de la configuración de Retrofit en toda la aplicación. Se encarga de:
+ * 
+ * - Configurar la URL base para todas las llamadas a la API
+ * - Establecer el convertidor GSON para la serialización/deserialización JSON
+ * - Proporcionar una instancia única de ApiService mediante inicialización perezosa
+ * - Gestionar la configuración de red de manera centralizada
+ * 
+ * La implementación utiliza el patrón Builder de Retrofit para una configuración
+ * limpia y mantenible de los servicios de red.
+ */
+
+ import com.escolavision.testescolavision.API.ApiService
 import com.google.gson.GsonBuilder
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory

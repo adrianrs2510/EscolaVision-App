@@ -1,3 +1,24 @@
+/**
+ * Pantalla de configuración de EscolaVision.
+ * 
+ * Esta pantalla permite a los usuarios personalizar la aplicación:
+ * - Gestión del tema de la aplicación (claro/oscuro)
+ * - Configuraciones de usuario
+ * - Opciones de cierre de sesión
+ * 
+ * Características principales:
+ * - Interfaz Material 3 con diseño adaptativo
+ * - Persistencia de preferencias de usuario
+ * - Gestión de temas visuales
+ * - Navegación integrada con menú lateral
+ * - Control de sesión de usuario
+ * 
+ * La pantalla actúa como centro de control para las
+ * preferencias y configuraciones personalizadas del usuario,
+ * permitiendo adaptar la experiencia de la aplicación
+ * a sus necesidades específicas.
+ */
+
 package com.escolavision.testescolavision.Screens
 
 import androidx.compose.foundation.background

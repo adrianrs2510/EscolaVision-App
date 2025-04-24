@@ -1,4 +1,26 @@
-package com.escolavision.testescolavision.Screens
+/**
+ * Pantalla de autenticación de EscolaVision.
+ * 
+ * Esta pantalla maneja todo el proceso de inicio de sesión, incluyendo:
+ * - Autenticación de usuarios registrados
+ * - Acceso como invitado
+ * - Redirección a registro de nuevos usuarios
+ * 
+ * Características principales:
+ * - Interfaz Material 3 con campos de entrada seguros
+ * - Validación de credenciales contra API
+ * - Gestión de sesiones con PreferencesManager
+ * - Navegación condicional según tipo de usuario:
+ *   · Profesores -> students_screen
+ *   · Alumnos/Orientadores -> home_screen
+ *   · Invitados -> home_screen
+ * 
+ * La pantalla actúa como punto de entrada principal al sistema,
+ * gestionando la autenticación y el flujo de navegación inicial
+ * según el rol del usuario.
+ */
+
+ package com.escolavision.testescolavision.Screens
 
 import android.util.Log
 import androidx.compose.foundation.Image

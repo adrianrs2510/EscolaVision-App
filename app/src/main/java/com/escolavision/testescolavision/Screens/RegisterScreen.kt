@@ -1,4 +1,26 @@
-package com.escolavision.testescolavision.Screens
+/**
+ * Pantalla de registro de usuarios de EscolaVision.
+ * 
+ * Esta pantalla gestiona el proceso completo de registro de nuevos usuarios:
+ * - Captura de datos personales (nombre, DNI, email, etc.)
+ * - Selección de tipo de usuario (Alumno/Profesor)
+ * - Búsqueda y selección de centro educativo
+ * - Gestión de foto de perfil
+ * - Validación de datos
+ * 
+ * Características principales:
+ * - Interfaz Material 3 con formulario estructurado
+ * - Integración con API GeoAPI para búsqueda de centros
+ * - Sistema de filtrado por ubicación (Comunidad, Provincia, Municipio)
+ * - Validación de campos y gestión de errores
+ * - Manejo de imágenes y conversión a Base64
+ * 
+ * La pantalla proporciona un flujo completo de registro,
+ * asegurando la correcta captura de información necesaria
+ * para crear nuevas cuentas en la plataforma EscolaVision.
+ */
+
+ package com.escolavision.testescolavision.Screens
 
 import android.content.Context
 import android.net.Uri

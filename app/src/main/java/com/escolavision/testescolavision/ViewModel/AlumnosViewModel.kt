@@ -1,4 +1,26 @@
-package com.escolavision.testescolavision.ViewModel
+/**
+ * ViewModel para la gestión de datos de alumnos y profesores en EscolaVision.
+ * 
+ * Esta clase maneja el estado y la lógica de negocio relacionada con:
+ * - Datos personales de usuarios (nombre, DNI, email)
+ * - Credenciales de acceso
+ * - Tipo de usuario (alumno/profesor)
+ * - Gestión de imágenes de perfil
+ * - Estados de UI para formularios
+ * 
+ * Características principales:
+ * - Estados observables con MutableState
+ * - Gestión de datos de perfil
+ * - Control de tipos de usuario
+ * - Manejo de imágenes URI
+ * - Validación de datos de usuario
+ * 
+ * El ViewModel actúa como intermediario entre la UI y
+ * la capa de datos, manteniendo el estado de la información
+ * del usuario durante el ciclo de vida de la aplicación.
+ */
+
+ package com.escolavision.testescolavision.ViewModel
 
 import android.net.Uri
 import androidx.compose.runtime.mutableStateOf

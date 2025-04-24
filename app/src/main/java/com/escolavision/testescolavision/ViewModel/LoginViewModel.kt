@@ -1,4 +1,23 @@
-package com.escolavision.testescolavision.ViewModel
+/**
+ * ViewModel para la gestión del inicio de sesión en EscolaVision.
+ * 
+ * Esta clase maneja el estado y la lógica relacionada con la autenticación:
+ * - Gestión de credenciales de usuario (usuario/DNI y contraseña)
+ * - Persistencia de datos de sesión
+ * - Manejo de estados de formulario de login
+ * 
+ * Características principales:
+ * - Estados observables con MutableState
+ * - Integración con SavedStateHandle para persistencia
+ * - Gestión de datos de autenticación
+ * - Actualización segura de credenciales
+ * 
+ * El ViewModel actúa como intermediario entre la UI de login
+ * y la lógica de autenticación, manteniendo el estado de las
+ * credenciales durante el proceso de inicio de sesión.
+ */
+
+ package com.escolavision.testescolavision.ViewModel
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.getValue

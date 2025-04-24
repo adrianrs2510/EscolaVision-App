@@ -1,3 +1,21 @@
+/**
+ * Pantalla "Acerca de" de la aplicación EscolaVision.
+ * 
+ * Esta pantalla muestra información general sobre la aplicación, incluyendo:
+ * - Versión de la aplicación
+ * - Información del equipo de desarrollo
+ * - Política de privacidad
+ * 
+ * Características principales:
+ * - Implementa un menú lateral (drawer) para navegación
+ * - Utiliza Material Design 3 para la interfaz de usuario
+ * - Mantiene consistencia con el diseño general de la aplicación
+ * - Gestiona las preferencias del usuario para personalización
+ * 
+ * La pantalla es accesible desde el menú principal y proporciona
+ * información esencial sobre la aplicación y sus políticas.
+ */
+
 package com.escolavision.testescolavision.Screens
 
 import androidx.compose.foundation.background

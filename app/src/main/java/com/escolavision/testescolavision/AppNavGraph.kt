@@ -21,15 +21,11 @@ import com.escolavision.testescolavision.Screens.SettingsScreen
 import com.escolavision.testescolavision.Screens.StudentsScreen
 import com.escolavision.testescolavision.Screens.TestDetailScreen
 
-// Componente principal de navegación que define todas las rutas de la aplicación
 @Composable
 fun NavigationComponent(navController: NavHostController) {
-    // Configuración del NavHost con la pantalla inicial
     NavHost(navController = navController, startDestination = "first_screen") {
-        // Pantalla principal (Home)
         composable("home_screen") { backStackEntry ->
             HomeScreen(navController)
-            // Manejo personalizado del botón de retroceso
             val onBackPressedDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
             onBackPressedDispatcher?.addCallback {
                 navController.navigate("first_screen") {

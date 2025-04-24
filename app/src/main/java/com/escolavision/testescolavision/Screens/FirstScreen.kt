@@ -1,4 +1,25 @@
-package com.escolavision.testescolavision.Screens
+/**
+ * Pantalla de bienvenida y presentación inicial de EscolaVision.
+ * 
+ * Esta pantalla sirve como punto de entrada principal a la aplicación, mostrando:
+ * - Logo e información del IES Politécnico Hermenegildo Lanz
+ * - Identidad visual de EscolaVision (logo y nombre)
+ * - Sistema de redirección inteligente basado en el tipo de usuario
+ * 
+ * Características principales:
+ * - Diseño Material 3 con elementos visuales corporativos
+ * - Gestión automática de sesiones de usuario
+ * - Navegación condicional según el tipo de usuario:
+ *   · Alumnos y orientadores -> home_screen
+ *   · Otros usuarios -> students_screen
+ *   · Sin sesión -> login_screen
+ * 
+ * Esta pantalla actúa como punto de partida de la aplicación,
+ * proporcionando una experiencia de usuario personalizada según
+ * el tipo de acceso y los permisos del usuario.
+ */
+
+ package com.escolavision.testescolavision.Screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background

@@ -1,3 +1,24 @@
+/**
+ * Pantalla de visualización de resultados de EscolaVision.
+ * 
+ * Esta pantalla permite ver y gestionar los resultados de los tests:
+ * - Visualización de intentos de tests realizados
+ * - Filtrado de resultados según tipo de usuario
+ * - Gráficos de barras para visualización de datos
+ * - Detalles específicos por intento
+ * 
+ * Características principales:
+ * - Interfaz Material 3 con lista dinámica de resultados
+ * - Sistema de actualización pull-to-refresh
+ * - Gráficos interactivos por áreas
+ * - Vista diferenciada para alumnos y profesores
+ * - Navegación a detalles específicos de cada intento
+ * 
+ * La pantalla actúa como centro de análisis de resultados,
+ * permitiendo tanto a alumnos como profesores revisar
+ * el progreso y rendimiento en los tests realizados.
+ */
+
 package com.escolavision.testescolavision.Screens
 
 import androidx.compose.foundation.background

@@ -1,3 +1,24 @@
+/**
+ * Pantalla de visualización de áreas de evaluación de EscolaVision.
+ * 
+ * Esta pantalla muestra una lista interactiva de todas las áreas de evaluación
+ * disponibles en la aplicación, incluyendo:
+ * - Visualización de logos de áreas
+ * - Descripción detallada de cada área
+ * - Interfaz con pull-to-refresh para actualización
+ * 
+ * Características principales:
+ * - Diseño Material 3 con cards personalizadas
+ * - Menú lateral para navegación
+ * - Carga y decodificación de imágenes Base64
+ * - Sistema de actualización de datos en tiempo real
+ * - Manejo de estados de carga
+ * 
+ * La pantalla proporciona una vista general de las diferentes áreas
+ * de evaluación disponibles en el sistema EscolaVision, permitiendo
+ * a los usuarios comprender el alcance de cada área evaluada.
+ */
+
 package com.escolavision.testescolavision.Screens
 
 // Importaciones necesarias para la funcionalidad de la pantalla

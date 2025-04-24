@@ -1,4 +1,25 @@
-package com.escolavision.testescolavision.Screens
+/**
+ * Pantalla principal de tests de EscolaVision.
+ * 
+ * Esta pantalla muestra la lista de tests disponibles para los usuarios y permite:
+ * - Visualizar todos los tests activos del sistema
+ * - Acceder a los detalles de cada test
+ * - Actualizar la lista mediante pull-to-refresh
+ * - Gestionar tests favoritos
+ * 
+ * Características principales:
+ * - Interfaz Material 3 con lista dinámica de tests
+ * - Menú lateral para navegación
+ * - Sistema de actualización en tiempo real
+ * - Filtrado automático de tests visibles
+ * - Gestión de estados con composables
+ * 
+ * La pantalla actúa como punto central de acceso a las evaluaciones
+ * disponibles en el sistema, proporcionando una interfaz intuitiva
+ * para que los usuarios accedan a los diferentes tests.
+ */
+
+ package com.escolavision.testescolavision.Screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*

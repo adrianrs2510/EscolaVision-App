@@ -1,4 +1,25 @@
-package com.escolavision.testescolavision.Screens
+/**
+ * Pantalla de gestión de perfil de usuario en EscolaVision.
+ * 
+ * Esta pantalla permite a los usuarios ver y editar su información personal:
+ * - Visualización de datos del perfil (nombre, DNI, foto)
+ * - Edición de información personal
+ * - Actualización de contraseña
+ * - Gestión de foto de perfil
+ * 
+ * Características principales:
+ * - Interfaz Material 3 con diseño adaptativo
+ * - Carga y actualización de datos desde la API
+ * - Gestión de imágenes en formato Base64
+ * - Validación de campos y datos
+ * - Sistema de actualización pull-to-refresh
+ * 
+ * La pantalla proporciona una interfaz completa para que los usuarios
+ * gestionen su información personal y mantengan actualizado su perfil
+ * en la plataforma EscolaVision.
+ */
+
+ package com.escolavision.testescolavision.Screens
 
 import RetrofitClient
 import android.content.Context
