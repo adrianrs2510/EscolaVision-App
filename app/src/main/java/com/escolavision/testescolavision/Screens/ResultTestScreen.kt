@@ -29,35 +29,36 @@ import com.escolavision.testescolavision.R
 
 
 
+// Pantalla que muestra los resultados detallados de un test específico
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ResultTestScreen(navController: NavController, resultados: List<Double>, pantallaAnterior: String) {
+    // Estados para manejar las áreas y la carga
     var areas by remember { mutableStateOf<List<Area>>(emptyList()) }
     val context = LocalContext.current
     val preferencesManager = PreferencesManager(context)
     var isLoading by remember { mutableStateOf(true) }
 
-    // Cargar áreas desde la API
+    // Efecto que carga las áreas al iniciar la pantalla
     LaunchedEffect(Unit) {
         isLoading = true
         RetrofitClient.api.getAreas().enqueue(object : Callback<AreaListResponse> {
             override fun onResponse(call: Call<AreaListResponse>, response: Response<AreaListResponse>) {
                 if (response.isSuccessful) {
                     areas = response.body()?.areas ?: emptyList()
-                } else {
                 }
                 isLoading = false
             }
-
 
             override fun onFailure(call: Call<AreaListResponse>, t: Throwable) {
                 isLoading = false
             }
         })
-
     }
 
+    // Estructura principal de la pantalla
     Scaffold(
+        // Barra superior con título y botón de retroceso
         topBar = {
             TopAppBar(
                 title = {
@@ -70,25 +71,36 @@ fun ResultTestScreen(navController: NavController, resultados: List<Double>, pan
                         color = colorResource(id = R.color.titulos)
                     )
                 },
-                colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = colorResource(id = R.color.fondoInicio)),
+                colors = TopAppBarDefaults.smallTopAppBarColors(
+                    containerColor = colorResource(id = R.color.fondoInicio)
+                ),
+                // Botón de navegación que cambia según la pantalla anterior
                 navigationIcon = {
                     if(pantallaAnterior == "home_screen"){
                         IconButton(onClick = { navController.navigate("home_screen") }) {
-                            Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Menú", tint = Color.White)
+                            Icon(imageVector = Icons.Default.ArrowBack, 
+                                 contentDescription = "Menú", 
+                                 tint = Color.White)
                         }
                     }else{
                         IconButton(onClick = { navController.navigate("results_screen") }) {
-                            Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Menú", tint = Color.White)
+                            Icon(imageVector = Icons.Default.ArrowBack, 
+                                 contentDescription = "Menú", 
+                                 tint = Color.White)
                         }
                     }
                 },
+                // Botón transparente para mantener simetría
                 actions = {
                     IconButton(onClick = {}) {
-                        Icon(imageVector = Icons.Default.Menu, contentDescription = "Menú", tint = Color.Transparent)
+                        Icon(imageVector = Icons.Default.Menu, 
+                             contentDescription = "Menú", 
+                             tint = Color.Transparent)
                     }
                 }
             )
         },
+        // Contenido principal
         content = { paddingValues ->
             Column(
                 modifier = Modifier
@@ -96,7 +108,7 @@ fun ResultTestScreen(navController: NavController, resultados: List<Double>, pan
                     .background(colorResource(id = R.color.fondoInicio))
                     .padding(paddingValues)
             ) {
-                // Muestra un indicador de carga mientras se obtienen los datos
+                // Indicador de carga
                 if (isLoading) {
                     Box(
                         modifier = Modifier.fillMaxSize(),
@@ -105,25 +117,25 @@ fun ResultTestScreen(navController: NavController, resultados: List<Double>, pan
                         CircularProgressIndicator(color = colorResource(id = R.color.azulBoton))
                     }
                 } else {
-                    // Verifica si hay suficientes áreas para los resultados
+                    // Lista de resultados por área
                     if (areas.size >= resultados.size) {
                         LazyColumn(
                             modifier = Modifier
                                 .fillMaxSize()
                                 .padding(16.dp)
                         ) {
+                            // Genera una tarjeta para cada resultado
                             items(resultados.indices.toList()) { index ->
-                                if (areas.isNotEmpty() && areas.size > index) { // Verifica si el índice es válido
+                                if (areas.isNotEmpty() && areas.size > index) { 
                                     Card(
                                         modifier = Modifier
                                             .fillMaxWidth()
                                             .padding(vertical = 8.dp),
                                         colors = CardDefaults.cardColors(
-                                            containerColor = colorResource(
-                                                id = R.color.azulBoton
-                                            )
+                                            containerColor = colorResource(id = R.color.azulBoton)
                                         )
                                     ) {
+                                        // Información del área y su resultado
                                         Column(modifier = Modifier.padding(16.dp)) {
                                             Text(
                                                 text = "${areas[index].nombre}: ${resultados[index]}",
@@ -139,7 +151,7 @@ fun ResultTestScreen(navController: NavController, resultados: List<Double>, pan
                                         }
                                     }
                                 } else {
-                                    // En caso de que las áreas estén vacías o el índice sea incorrecto
+                                    // Mensaje cuando no hay resultados
                                     Box(
                                         modifier = Modifier.fillMaxSize(),
                                         contentAlignment = Alignment.Center

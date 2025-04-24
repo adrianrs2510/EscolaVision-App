@@ -51,21 +51,26 @@ import java.time.format.DateTimeFormatter
 import com.escolavision.testescolavision.R
 
 
+// Pantalla de registro que permite a nuevos usuarios crear una cuenta
 @Composable
 fun RegisterScreen(navController: NavController, viewModel: RegisterViewModel = viewModel()) {
+    // Configuración inicial y estados para manejo de errores
     val context = LocalContext.current
     var showErrorDialog by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf("") }
 
+    // Diálogo de error
     if (showErrorDialog) {
         ShowAlertDialog(message = errorMessage) { showErrorDialog = false }
     }
 
+    // Función auxiliar para mostrar errores
     fun showError(message: String) {
         errorMessage = message
         showErrorDialog = true
     }
 
+    // Estructura principal de la pantalla
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -87,6 +92,7 @@ fun RegisterScreen(navController: NavController, viewModel: RegisterViewModel = 
     }
 }
 
+// Componente de encabezado con logo y título
 @Composable
 fun Header() {
     Row(verticalAlignment = Alignment.CenterVertically) {
@@ -106,19 +112,16 @@ fun Header() {
     Spacer(modifier = Modifier.height(32.dp))
 }
 
+// Formulario principal de registro
 @Composable
 fun RegisterForm(viewModel: RegisterViewModel, context: Context, navController: NavController, showError: (String) -> Unit) {
-    /*val imagePickerLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.GetContent()
-    ) { uri -> viewModel.updateImageUri(uri) }*/
-
+    // Campos de entrada para datos del usuario
     InputField(value = viewModel.nombre.value, label = "Nombre y Apellidos") { viewModel.updateNombre(it) }
     InputField(value = viewModel.email.value, label = "Email") { viewModel.updateEmail(it) }
     InputField(value = viewModel.dni.value, label = "DNI") { viewModel.updateDni(it) }
     InputField(label = "Año de Nacimiento", value = viewModel.edad.value) { viewModel.updateEdad(it) }
     InputField(value = viewModel.claveAcceso.value, label = "Contraseña", isPassword = true) { viewModel.updateClaveAcceso(it) }
 
-    //ImagePicker(imagePickerLauncher, viewModel.selectedImageUri.value.toString())
 
     ToggleButtons(viewModel)
 
@@ -141,236 +144,75 @@ fun RegisterForm(viewModel: RegisterViewModel, context: Context, navController: 
     }
 }
 
+// Diálogo para filtrar centros por ubicación
 @Composable
 fun FilterDialog(viewModel: RegisterViewModel, onDismiss: () -> Unit) {
-    val context = LocalContext.current
-    val coroutineScope = rememberCoroutineScope()
-
-    // Estados de los filtros
+    // Estados para manejar selecciones geográficas
     var comunidades by remember { mutableStateOf<List<Pair<String, String>>>(emptyList()) }
     var provincias by remember { mutableStateOf<List<Pair<String, String>>>(emptyList()) }
     var municipios by remember { mutableStateOf<List<String>>(emptyList()) }
 
-    // Filtros seleccionados
-    var selectedComunidad by remember { mutableStateOf("") }
-    var selectedProvincia by remember { mutableStateOf("") }
-    var selectedMunicipio by remember { mutableStateOf("") }
+    // Clave API para servicios geográficos
+    const val key = "a4bed7909a6572f45ec3fcc7bc36722db648c87dd6cdef01666f1b04e242b40c"
 
-    // Flags para indicar si los datos de provincias y municipios están cargados
-    var provinciasCargadas by remember { mutableStateOf(false) }
-    var municipiosCargados by remember { mutableStateOf(false) }
-
-    // Cargar las comunidades cuando se abre el diálogo
-    LaunchedEffect(Unit) {
-        coroutineScope.launch {
-            comunidades = fetchComunidades()
-        }
-    }
-
-    // Filtrar las provincias cuando se selecciona una comunidad
-    LaunchedEffect(selectedComunidad) {
-        if (selectedComunidad.isNotEmpty()) {
-            coroutineScope.launch {
-                provincias = fetchProvincias(comunidades.find { it.first == selectedComunidad }?.second ?: "")
-                selectedProvincia = "" // Resetear provincia
-                municipios = emptyList() // Resetear municipios
-                provinciasCargadas = true // Marcar provincias como cargadas
-            }
-        }
-    }
-
-    // Filtrar los municipios cuando se selecciona una provincia
-    LaunchedEffect(selectedProvincia) {
-        if (selectedProvincia.isNotEmpty()) {
-            coroutineScope.launch {
-                municipios = fetchMunicipios(provincias.find { it.first == selectedProvincia }?.second ?: "")
-                selectedMunicipio = "" // Resetear municipio
-                municipiosCargados = true // Marcar municipios como cargados
-            }
-        }
-    }
-
-    // Convertir las listas de pares en listas de strings
-    val comunidadesOptions = comunidades.map { it.first }
-    val provinciasOptions = provincias.map { it.first }
-    val municipiosOptions = municipios
-
-    // Mostrar el AlertDialog para seleccionar filtros
-    AlertDialog(
-        onDismissRequest = { onDismiss() },
-        title = { Text("Seleccionar Filtros") },
-        text = {
-            Column {
-                // Selector de Comunidad Autónoma
-                DropdownSelector(
-                    label = "Comunidad Autónoma",
-                    options = comunidadesOptions,
-                    selectedOption = selectedComunidad,
-                    onOptionSelected = { selectedComunidad = it }
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-
-                // Selector de Provincia, habilitado solo si las provincias están cargadas
-                DropdownSelector(
-                    label = "Provincia",
-                    options = provinciasOptions,
-                    selectedOption = selectedProvincia,
-                    onOptionSelected = { selectedProvincia = it },
-                    enabled = provinciasCargadas && selectedComunidad.isNotEmpty()
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-
-                // Selector de Municipio, habilitado solo si los municipios están cargados
-                DropdownSelector(
-                    label = "Municipio",
-                    options = municipiosOptions,
-                    selectedOption = selectedMunicipio,
-                    onOptionSelected = { selectedMunicipio = it },
-                    enabled = municipiosCargados && selectedProvincia.isNotEmpty()
-                )
-            }
-        },
-        confirmButton = {
-            Button(onClick = {
-                // Actualizar los filtros en el ViewModel
-                viewModel.setFilters(selectedComunidad, selectedProvincia, selectedMunicipio)
-
-                // Llamar a la función para hacer la búsqueda
-                searchCentros(viewModel, context)
-
-                // Cerrar el diálogo
-                onDismiss()
-            }) {
-                Text("Buscar")
-            }
-        },
-        dismissButton = {
-            Button(onClick = { onDismiss() }) {
-                Text("Cancelar")
-            }
-        }
-    )
-}
-
-
-
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun SearchCentros(viewModel: RegisterViewModel) {
-    val context = LocalContext.current
-    var showDialog by remember { mutableStateOf(false) }
-    var searchText by remember { mutableStateOf("") }
-
-    // Filtrar los centros según el texto de búsqueda
-    val filteredCentros = viewModel.centros.value.filter {
-        it.denominacion_especifica.contains(searchText, ignoreCase = true)
-    }
-
-    // Actualizar los centros solo cuando sea necesario
-    LaunchedEffect(searchText) {
-        if (searchText.isEmpty()) {
-            searchCentros(viewModel, context)
-        } else {
-            viewModel.updateCentros(filteredCentros)
-        }
-    }
-
-    OutlinedTextField(
-        value = searchText,
-        onValueChange = { newText -> searchText = newText },
-        label = { Text("Buscar Centro") },
-        trailingIcon = {
-            Row {
-                IconButton(onClick = { showDialog = true }) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.search),
-                        contentDescription = "Filtrar",
-                        tint = Color.Unspecified
-                    )
+    // Funciones para obtener datos geográficos
+    suspend fun fetchComunidades(): List<Pair<String, String>> {
+        // Obtiene lista de comunidades autónomas
+        return try {
+                withContext(Dispatchers.IO) {
+                val response = URL("https://apiv1.geoapi.es/comunidades?type=JSON&key=$key&sandbox=0").readText()
+                val jsonObject = JSONObject(response)
+                val jsonArray = jsonObject.getJSONArray("data")
+                List(jsonArray.length()) {
+                    val comunidad = jsonArray.getJSONObject(it)
+                    val nombreComunidad = comunidad.getString("COM")
+                    val codigoComunidad = comunidad.getString("CCOM")
+                    Pair(nombreComunidad, codigoComunidad)  
                 }
             }
-        },
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp),
-        colors = TextFieldDefaults.outlinedTextFieldColors(
-            textColor = Color.Black,
-            cursorColor = Color.White,
-            focusedBorderColor = colorResource(id = R.color.azulBoton),
-            unfocusedBorderColor = Color.Gray,
-            containerColor = Color.White,
-            focusedLabelColor = colorResource(id = R.color.azulBoton),
-            unfocusedLabelColor = colorResource(id = R.color.azulBoton)
-        )
-    )
-
-    if (showDialog) {
-        FilterDialog(viewModel, onDismiss = { showDialog = false })
-    }
-}
-
-
-
-
-const val key = "a4bed7909a6572f45ec3fcc7bc36722db648c87dd6cdef01666f1b04e242b40c"
-
-suspend fun fetchComunidades(): List<Pair<String, String>> {
-    return try {
-        // Mover la operación de red a un hilo de fondo
-        withContext(Dispatchers.IO) {
-            val response = URL("https://apiv1.geoapi.es/comunidades?type=JSON&key=$key&sandbox=0").readText()
-            val jsonObject = JSONObject(response)
-            val jsonArray = jsonObject.getJSONArray("data")
-            List(jsonArray.length()) {
-                val comunidad = jsonArray.getJSONObject(it)
-                val nombreComunidad = comunidad.getString("COM")
-                val codigoComunidad = comunidad.getString("CCOM")
-                Pair(nombreComunidad, codigoComunidad)  // Retorna un par (nombre, código)
-            }
+        } catch (e: Exception) {
+            emptyList()
         }
-    } catch (e: Exception) {
-        emptyList()
     }
-}
 
-
-
-suspend fun fetchProvincias(comunidad: String): List<Pair<String, String>> {
-    return try {
-        withContext(Dispatchers.IO) {
-            val response = URL("https://apiv1.geoapi.es/provincias?CCOM=$comunidad&type=JSON&key=$key&sandbox=0").readText()
-            val jsonObject = JSONObject(response)
-            val jsonArray = jsonObject.getJSONArray("data")
-            List(jsonArray.length()) {
-                val provincia = jsonArray.getJSONObject(it)
-                val nombreProvincia = provincia.getString("PRO")
-                val codigoProvincia = provincia.getString("CPRO")
-                Pair(nombreProvincia, codigoProvincia)  // Retorna un par (nombre, código)
+    suspend fun fetchProvincias(comunidad: String): List<Pair<String, String>> {
+        // Obtiene lista de provincias de una comunidad
+        return try {
+            withContext(Dispatchers.IO) {
+                val response = URL("https://apiv1.geoapi.es/provincias?CCOM=$comunidad&type=JSON&key=$key&sandbox=0").readText()
+                val jsonObject = JSONObject(response)
+                val jsonArray = jsonObject.getJSONArray("data")
+                List(jsonArray.length()) {
+                    val provincia = jsonArray.getJSONObject(it)
+                    val nombreProvincia = provincia.getString("PRO")
+                    val codigoProvincia = provincia.getString("CPRO")
+                    Pair(nombreProvincia, codigoProvincia) 
+                }
             }
+        } catch (e: Exception) {
+            emptyList()
         }
-    } catch (e: Exception) {
-        emptyList()
     }
-}
 
-suspend fun fetchMunicipios(provincia: String): List<String> {
-    return try {
-        withContext(Dispatchers.IO) {
-            val response = URL("https://apiv1.geoapi.es/municipios?CPRO=$provincia&type=JSON&key=$key&sandbox=0").readText()
-            val jsonObject = JSONObject(response)
-            val jsonArray = jsonObject.getJSONArray("data")
-            List(jsonArray.length()) {
-                val provincia = jsonArray.getJSONObject(it)
-                provincia.getString("DMUN50")
+    suspend fun fetchMunicipios(provincia: String): List<String> {
+        // Obtiene lista de municipios de una provincia
+        return try {
+            withContext(Dispatchers.IO) {
+                val response = URL("https://apiv1.geoapi.es/municipios?CPRO=$provincia&type=JSON&key=$key&sandbox=0").readText()
+                val jsonObject = JSONObject(response)
+                val jsonArray = jsonObject.getJSONArray("data")
+                List(jsonArray.length()) {
+                    val provincia = jsonArray.getJSONObject(it)
+                    provincia.getString("DMUN50")
+                }
             }
+        } catch (e: Exception) {
+            emptyList()
         }
-    } catch (e: Exception) {
-        emptyList()
     }
 }
 
-
+// Componente de selector desplegable reutilizable
 @Composable
 fun DropdownSelector(
     label: String,

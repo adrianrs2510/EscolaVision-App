@@ -21,12 +21,15 @@ import com.escolavision.testescolavision.Screens.SettingsScreen
 import com.escolavision.testescolavision.Screens.StudentsScreen
 import com.escolavision.testescolavision.Screens.TestDetailScreen
 
+// Componente principal de navegación que define todas las rutas de la aplicación
 @Composable
 fun NavigationComponent(navController: NavHostController) {
+    // Configuración del NavHost con la pantalla inicial
     NavHost(navController = navController, startDestination = "first_screen") {
+        // Pantalla principal (Home)
         composable("home_screen") { backStackEntry ->
             HomeScreen(navController)
-
+            // Manejo personalizado del botón de retroceso
             val onBackPressedDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
             onBackPressedDispatcher?.addCallback {
                 navController.navigate("first_screen") {
@@ -34,8 +37,11 @@ fun NavigationComponent(navController: NavHostController) {
                 }
             }
         }
+
+        // Pantalla de perfil de usuario
         composable("profile_screen") { backStackEntry ->
             ProfileScreen(navController)
+            // Manejo del botón de retroceso para volver a la pantalla inicial
             val onBackPressedDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
             onBackPressedDispatcher?.addCallback {
                 navController.navigate("first_screen") {
@@ -43,54 +49,70 @@ fun NavigationComponent(navController: NavHostController) {
                 }
             }
         }
+
+        // Pantalla de resultados generales
         composable("results_screen") { backStackEntry ->
             ResultsScreen(navController)
         }
+
+        // Pantalla de configuración
         composable("settings_screen") { backStackEntry ->
             SettingsScreen(navController)
         }
+
+        // Pantalla de ayuda
         composable("help_screen") { backStackEntry ->
             HelpScreen(navController)
         }
+
+        // Pantalla de información sobre la aplicación
         composable("about_screen") { backStackEntry ->
             AboutScreen(navController)
         }
 
+        // Pantalla de detalle de test con parámetro ID
         composable("test_detail_screen/{id}") { backStackEntry ->
             val id = backStackEntry.arguments?.getString("id") ?: 0
             TestDetailScreen(navController, id)
         }
 
+        // Pantalla inicial de la aplicación
         composable("first_screen") {
             FirstScreen(navController)
         }
 
+        // Pantalla de inicio de sesión
         composable("login_screen") {
             LoginScreen(navController)
         }
 
+        // Pantalla de registro
         composable("register_screen") {
             RegisterScreen(navController)
         }
 
+        // Pantalla de áreas de evaluación
         composable("areas_screen") { backStackEntry ->
             AreasScreen(navController)
         }
         
+        // Pantalla de gestión de estudiantes
         composable("students_screen") { backStackEntry ->
             StudentsScreen(navController)
         }
 
+        // Pantalla de resultados de test específico con parámetros
         composable("result_test_screen/{resultados}/{pantallaAnterior}") { backStackEntry ->
+            // Procesa los resultados desde la URL y los convierte a lista de doubles
             val resultadosString = backStackEntry.arguments?.getString("resultados") ?: ""
             val resultados = resultadosString.split(";").mapNotNull { it.toDoubleOrNull() }
             val pantallaAnterior = backStackEntry.arguments?.getString("pantallaAnterior") ?: ""
             ResultTestScreen(navController, resultados, pantallaAnterior)
         }
 
+        // Pantalla de gestión de centros educativos
         composable("centros_screen") { backStackEntry ->
             CentrosScreen(navController)
         }
-
     }
 }

@@ -47,40 +47,52 @@ import java.time.format.DateTimeFormatter
 import com.escolavision.testescolavision.R
 
 
+// Importaciones necesarias para la funcionalidad de la pantalla
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StudentsScreen(navController: NavController, viewModel: AlumnosViewModel = viewModel()) {
+    // Variables de estado y contexto
     val context = LocalContext.current
     val preferencesManager = PreferencesManager(context)
+    
+    // Obtención de datos del usuario y centro desde las preferencias
     val id = preferencesManager.getLoginData().first
     val tipo = preferencesManager.getLoginData().second ?: ""
     val id_centro = preferencesManager.getCenterData()
+    
+    // Estado del drawer (menú lateral) y scope para corrutinas
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
 
+    // Estados para manejo de diálogos y errores
     var showErrorDialog by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf("") }
 
+    // Estados para la lista de alumnos y filtrado
     var alumnos by remember { mutableStateOf<List<Usuarios>>(emptyList()) }
     var filteredAlumnos by remember { mutableStateOf<List<Usuarios>>(emptyList()) }
     var isLoading by remember { mutableStateOf(true) }
     var selectedAlumno by remember { mutableStateOf<Usuarios?>(null) }
+    
+    // Estados para los diferentes diálogos
     var showDialog by remember { mutableStateOf(false) }
     var showDeleteDialog by remember { mutableStateOf(false) }
     var showAddDialog by remember { mutableStateOf(false) }
     var searchQuery by remember { mutableStateOf("") }
 
-    // Filtrar los alumnos según la búsqueda
+    // Función para filtrar la lista de alumnos según la búsqueda
     val filteredList = alumnos.filter {
-        it.nombre.contains(searchQuery, ignoreCase = true) || it.dni.contains(searchQuery, ignoreCase = true)
+        it.nombre.contains(searchQuery, ignoreCase = true) || 
+        it.dni.contains(searchQuery, ignoreCase = true)
     }
 
-    fun loadUsuarios(){
+    // Función para cargar la lista de usuarios desde la API
+    fun loadUsuarios() {
         RetrofitClient.api.getUsuarioData(id_centro = id_centro).enqueue(object : Callback<UsuariosListResponse> {
             override fun onResponse(call: Call<UsuariosListResponse>, response: Response<UsuariosListResponse>) {
                 if (response.isSuccessful) {
                     alumnos = response.body()?.usuarios?.filter { it.tipo_usuario == "Alumno" } ?: emptyList()
-                    filteredAlumnos = alumnos // Inicializa la lista filtrada con todos los alumnos
+                    filteredAlumnos = alumnos
                 }
                 isLoading = false
             }
@@ -91,10 +103,12 @@ fun StudentsScreen(navController: NavController, viewModel: AlumnosViewModel = v
         })
     }
 
+    // Efecto que se ejecuta al iniciar la pantalla para cargar los datos
     LaunchedEffect(Unit) {
         loadUsuarios()
     }
 
+    // Diálogo de edición de alumno
     if (showDialog && selectedAlumno != null) {
         EditAlumnoDialog(
             alumno = selectedAlumno!!,
@@ -105,6 +119,7 @@ fun StudentsScreen(navController: NavController, viewModel: AlumnosViewModel = v
         )
     }
 
+    // Diálogo de confirmación para eliminar alumno
     if (showDeleteDialog && selectedAlumno != null) {
         DeleteAlumnoDialog(alumno = selectedAlumno!!, onDismiss = { showDeleteDialog = false }, onDelete = {
             val deleteRequest = DeleteRequest(
@@ -133,10 +148,12 @@ fun StudentsScreen(navController: NavController, viewModel: AlumnosViewModel = v
         })
     }
 
+    // Diálogo de error
     if (showErrorDialog) {
         ShowAlertDialog(message = errorMessage) { showErrorDialog = false }
     }
 
+    // Diálogo para añadir nuevo alumno
     if (showAddDialog) {
         AddAlumnoDialog(id_centro = id_centro,
             onDismiss = { showAddDialog = false },
@@ -283,6 +300,7 @@ fun StudentsScreen(navController: NavController, viewModel: AlumnosViewModel = v
     )
 }
 
+// Función para manejar la actualización del perfil de un alumno
 private fun handleProfileUpdate(
     updatedUser: Usuarios,
     context: Context,
@@ -376,15 +394,14 @@ fun EditAlumnoDialog(alumno: Usuarios, onDismiss: () -> Unit, onSave: (Usuarios)
             Button(
                 colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.azulBoton)),
                 onClick = {
-                // Crear un nuevo objeto Usuarios con los datos modificados
                 val updatedAlumno = alumno.copy(
                     nombre = nombre,
                     email = email,
                     fecha_nacimiento = edad,
                     dni = dni
                 )
-                onSave(updatedAlumno) // Llamar a la función onSave para pasar el objeto actualizado
-                onDismiss() // Cerrar el diálogo
+                onSave(updatedAlumno) 
+                onDismiss() 
             }) {
                 Text("Guardar")
             }

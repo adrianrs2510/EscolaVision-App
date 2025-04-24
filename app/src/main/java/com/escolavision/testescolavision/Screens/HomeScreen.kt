@@ -31,28 +31,37 @@ import retrofit2.Response
 import com.escolavision.testescolavision.R
 
 
+// Clase de datos que representa un elemento de test con su estado de favorito
 data class TestItem(
     val test: Test,
     var isFavorite: Boolean = false
 )
 
+// Pantalla principal que muestra la lista de tests disponibles
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(navController: NavController) {
+    // Configuración inicial y obtención de datos del usuario
     val context = LocalContext.current
     val preferencesManager = PreferencesManager(context)
     val id = preferencesManager.getLoginData().first
     val tipo = preferencesManager.getLoginData().second ?: ""
+
+    // Estados para manejar la lista de tests y la actualización
     var tests by remember { mutableStateOf<List<TestItem>>(emptyList()) }
     var isRefreshing by remember { mutableStateOf(false) }
+
+    // Configuración del drawer (menú lateral)
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
 
+    // Función para cargar los tests desde la API
     fun loadTests() {
         isRefreshing = true
         RetrofitClient.api.getTests().enqueue(object : Callback<TestsResponse> {
             override fun onResponse(call: Call<TestsResponse>, response: Response<TestsResponse>) {
                 if (response.isSuccessful) {
+                    // Filtra los tests visibles y los convierte en TestItems
                     tests = response.body()?.tests?.filter { it.isVisible == 1 }?.map {
                         TestItem(test = it)
                     } ?: emptyList()
@@ -65,13 +74,16 @@ fun HomeScreen(navController: NavController) {
         })
     }
 
+    // Efecto que se ejecuta al iniciar la pantalla para cargar los tests
     LaunchedEffect(Unit) {
         loadTests()
     }
 
+    // Estructura principal de la interfaz con menú lateral
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
+            // Componente del menú lateral
             MenuDrawer(
                 navController = navController,
                 id = id,
@@ -82,7 +94,9 @@ fun HomeScreen(navController: NavController) {
             )
         },
         content = {
+            // Estructura principal de la pantalla
             Scaffold(
+                // Barra superior con título y botón de menú
                 topBar = {
                     TopAppBar(
                         title = {
@@ -116,6 +130,7 @@ fun HomeScreen(navController: NavController) {
                     )
                 },
                 content = { paddingValues ->
+                    // Contenido principal con lista de tests
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
@@ -124,17 +139,18 @@ fun HomeScreen(navController: NavController) {
                     ) {
                         Spacer(modifier = Modifier.height(16.dp))
 
+                        // Lista actualizable con gesto de pull-to-refresh
                         SwipeRefresh(
                             state = rememberSwipeRefreshState(isRefreshing),
-                            onRefresh = {
-                                loadTests()
-                            }
+                            onRefresh = { loadTests() }
                         ) {
+                            // Lista scrolleable de tests
                             LazyColumn(
                                 contentPadding = PaddingValues(8.dp),
                                 verticalArrangement = Arrangement.spacedBy(8.dp),
                                 modifier = Modifier.fillMaxSize()
                             ) {
+                                // Renderiza cada test como un botón
                                 items(tests) { testItem ->
                                     Column(modifier = Modifier.fillMaxWidth()) {
                                         Button(
@@ -144,7 +160,7 @@ fun HomeScreen(navController: NavController) {
                                             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF007AFF))
                                         ) {
                                             Text(text = testItem.test.nombretest, color = Color.White)
-                                          }
+                                        }
                                     }
                                 }
                             }

@@ -1,5 +1,6 @@
 package com.escolavision.testescolavision.Screens
 
+// Importaciones necesarias para la funcionalidad de la pantalla
 import android.graphics.BitmapFactory
 import android.util.Base64
 import android.util.Log
@@ -36,16 +37,21 @@ import retrofit2.Response
 import com.escolavision.testescolavision.R
 
 
+// Pantalla principal de Áreas que muestra una lista de áreas disponibles
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AreasScreen(navController: NavController) {
+    // Configuración inicial del contexto y preferencias del usuario
     val context = LocalContext.current
     val preferencesManager = PreferencesManager(context)
     val id = preferencesManager.getLoginData().first
     val tipo = preferencesManager.getLoginData().second ?: ""
+    
+    // Configuración del estado del drawer (menú lateral)
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
 
+    // Estados para manejar la lista de áreas y el estado de carga
     var areas by remember { mutableStateOf<List<Area>>(emptyList()) }
     var isLoading by remember { mutableStateOf(true) }
 
@@ -67,14 +73,16 @@ fun AreasScreen(navController: NavController) {
         })
     }
 
-    // Cargar las áreas cuando la pantalla se inicia
+    // Efecto que se ejecuta al iniciar la pantalla para cargar los datos
     LaunchedEffect(Unit) {
         loadAreas()
     }
 
+    // Estructura principal de la interfaz con menú lateral
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
+            // Componente del menú lateral
             MenuDrawer(
                 navController = navController,
                 id = id,
@@ -85,7 +93,9 @@ fun AreasScreen(navController: NavController) {
             )
         },
         content = {
+            // Estructura principal de la pantalla
             Scaffold(
+                // Barra superior con título y botón de menú
                 topBar = {
                     TopAppBar(
                         title = {
@@ -118,16 +128,19 @@ fun AreasScreen(navController: NavController) {
                     )
                 },
                 content = { paddingValues ->
+                    // Contenido principal con lista de áreas
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
-                            .background(colorResource(id = R.color.fondoInicio)) // Fondo gris
+                            .background(colorResource(id = R.color.fondoInicio))
                             .padding(paddingValues)
                     ) {
+                        // Lista actualizable con gesto de pull-to-refresh
                         SwipeRefresh(
                             state = rememberSwipeRefreshState(isRefreshing = isLoading),
                             onRefresh = { loadAreas() }
                         ) {
+                            // Lista scrolleable de áreas
                             LazyColumn(
                                 modifier = Modifier
                                     .fillMaxSize()
@@ -145,13 +158,14 @@ fun AreasScreen(navController: NavController) {
     )
 }
 
+// Componente que representa un elemento individual de área en la lista
 @Composable
 fun AreaItem(area: Area) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp),
-        colors = CardDefaults.cardColors(containerColor = colorResource(id = R.color.azulBoton)) // Fondo claro para cada área
+        colors = CardDefaults.cardColors(containerColor = colorResource(id = R.color.azulBoton))
     ) {
         Row(
             modifier = Modifier
@@ -159,16 +173,12 @@ fun AreaItem(area: Area) {
                 .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-
+            // Decodificación y visualización del logo del área desde Base64
             val decodedString = Base64.decode(area.logo, Base64.DEFAULT)
-
-            // Convertir el ByteArray a un Bitmap
             val bitmap = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.size)
-
-            // Convertir el Bitmap a ImageBitmap para usarlo en Compose
             val imageBitmap: ImageBitmap = bitmap.asImageBitmap()
 
-            // Logo
+            // Visualización del logo
             Image(
                 bitmap = imageBitmap,
                 contentDescription = null,
@@ -176,7 +186,8 @@ fun AreaItem(area: Area) {
                     .size(60.dp)
                     .padding(end = 16.dp)
             )
-            // Información del área
+            
+            // Información textual del área
             Column {
                 Text(text = area.nombre, fontWeight = FontWeight.Bold, fontSize = 18.sp)
                 Spacer(modifier = Modifier.height(4.dp))

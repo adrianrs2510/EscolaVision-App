@@ -9,69 +9,66 @@ import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Query
 
-// Data class para la solicitud de inicio de sesión
-data class   LoginRequest(val usuario: String, val contrasena: String)
+// Clases de datos para la solicitud y respuesta de inicio de sesión
+data class LoginRequest(val usuario: String, val contrasena: String)
 
-// Data class para la respuesta de inicio de sesión
 data class LoginResponse(
-    val status: String,
-    val message: String,
-    val id: Int,
-    val nombre: String,
-    val apellido: String,
-    val is_orientador: Int,
-    val tipo: String,
-    val dni: String,
-    val id_centro: String
+    val status: String,      // Estado de la respuesta
+    val message: String,     // Mensaje de la respuesta
+    val id: Int,            // ID del usuario
+    val nombre: String,      // Nombre del usuario
+    val apellido: String,    // Apellido del usuario
+    val is_orientador: Int,  // Indica si es orientador (1) o no (0)
+    val tipo: String,        // Tipo de usuario
+    val dni: String,         // DNI del usuario
+    val id_centro: String    // ID del centro educativo
 )
 
-// Data class para los tests
+// Clase para representar un test
 @JsonClass(generateAdapter = true)
 data class Test(
     val id: Int,
     val nombretest: String,
-    val isVisible: Int
+    val isVisible: Int       // Indica si el test es visible (1) o no (0)
 )
 
-
-// Data class para los profesores
+// Clase para representar preguntas del test
 data class Preguntas(
     val id: Int,
-    val idtest: Int,
-    val enunciado: String,
+    val idtest: Int,        // ID del test al que pertenece
+    val enunciado: String,  // Texto de la pregunta
 )
 
-// Data class para las areas
+// Clase para representar áreas de evaluación
 data class Area(
     val id: Int,
     val nombre: String,
     val descripción: String,
-    val logo: String
+    val logo: String        // Ruta o URL del logo del área
 )
 
-// Data class para los profesores
+// Clase para relacionar preguntas con áreas (PxA = Pregunta por Área)
 data class PxA(
     val id: Int,
-    val idpregunta: Int,
-    val idarea: Int,
+    val idpregunta: Int,    // ID de la pregunta
+    val idarea: Int,        // ID del área relacionada
 )
 
-
-// Data class para la solicitud de registro
+// Clases para el registro de usuarios
 @JsonClass(generateAdapter = true)
 data class RegisterRequest(
-    val tabla: String,
-    val datos: Usuarios
+    val tabla: String,      // Nombre de la tabla en la base de datos
+    val datos: Usuarios     // Datos del usuario a registrar
 )
 
-// Data class para la solicitud de intentos
+// Clase para registrar intentos de test
 @JsonClass(generateAdapter = true)
 data class IntentoRequest(
     val tabla: String,
     val datos: Intento
 )
 
-// Data class para los alumnos
+// Clase que representa a un usuario
 data class Usuarios(
     val id: Int,
     val nombre: String,
@@ -82,9 +79,10 @@ data class Usuarios(
     val is_orientador: Int,
     val fecha_nacimiento: String,
     val email: String,
-    val id_centro : String
+    val id_centro: String
 )
 
+// Clase que representa un intento de test
 @JsonClass(generateAdapter = true)
 data class Intento(
     val idtest: Int = 0,
@@ -94,22 +92,18 @@ data class Intento(
     val resultados: String = "",
 )
 
-
-
-// Data class para la respuesta del registro
+// Clases de respuesta para diferentes operaciones
 data class RegisterResponse(
     val status: String,
     val message: String? = null
 )
 
-// Data class para la respuesta del intento
 data class IntentoResponse(
     val status: String,
     val message: String? = null
 )
 
-
-// Data class para la respuesta de los tests
+// Clases wrapper para listas de respuesta
 @JsonClass(generateAdapter = true)
 data class TestsResponse(
     val tests: List<Test>
@@ -196,46 +190,57 @@ data class CentroCompleto(
 )
 
 
-// Interfaz de Retrofit para las llamadas API
+// Interfaz que define todos los endpoints de la API
 interface ApiService {
+    // Endpoint para inicio de sesión
     @POST("login.php")
     fun login(@Body request: LoginRequest): Call<LoginResponse>
 
+    // Endpoint para obtener tests
     @GET("leer.php?tabla=tests")
     fun getTests(): Call<TestsResponse>
 
+    // Endpoint para registro de usuarios
     @POST("insertar.php")
     fun register(@Body request: RegisterRequest): Call<RegisterResponse>
 
+    // Endpoint para obtener datos de usuarios por centro
     @GET("leer.php")
     fun getUsuarioData(@Query("tabla") tabla: String = "usuarios", @Query("id_centro") id_centro: String): Call<UsuariosListResponse>
 
+    // Endpoint para obtener preguntas
     @GET("leer.php?tabla=preguntas")
     fun getPreguntas(): Call<PreguntasListResponse>
 
+    // Endpoint para obtener relaciones pregunta-área
     @GET("leer.php?tabla=pxa")
     fun getPxa(): Call<PxaListResponse>
 
+    // Endpoint para registrar intentos de test
     @POST("insertar.php")
     fun insertarIntento(@Body request: IntentoRequest): Call<IntentoResponse>
 
+    // Endpoint para obtener áreas
     @GET("leer.php?tabla=areas")
     fun getAreas(): Call<AreaListResponse>
 
+    // Endpoint para obtener intentos por centro
     @GET("leer.php")
     fun getIntentos(@Query("tabla") tabla: String = "intentos", @Query("id_centro") id_centro: String): Call<IntentoListResponse>
 
+    // Endpoint para eliminar registros
     @HTTP(method = "DELETE", path = "borrar.php", hasBody = true)
     fun delete(@Body request: DeleteRequest): Call<DeleteResponse>
 
+    // Endpoint para actualizar perfil
     @PUT("actualizar.php")
     fun update(@Body request: UpdateRequest): Call<UpdateProfileResponse>
 
+    // Endpoints para gestión de centros educativos
     @GET("leer.php")
     fun searchCentros(@Query("tabla") tabla: String = "centros", @Query("localidad") localidad: String): Call<CentroListResponse>
 
     @GET("leer.php")
     fun getCentro(@Query("tabla") tabla: String = "centros", @Query("id") id: String): Call<CentroResponse>
-
 }
 

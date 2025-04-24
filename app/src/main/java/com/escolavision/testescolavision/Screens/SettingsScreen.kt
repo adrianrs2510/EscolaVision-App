@@ -20,22 +20,28 @@ import kotlinx.coroutines.launch
 import com.escolavision.testescolavision.R
 
 
+// Pantalla de configuración que permite al usuario personalizar la aplicación
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(navController: NavController) {
+    // Configuración inicial y obtención de datos del usuario
     val context = LocalContext.current
     val preferencesManager = PreferencesManager(context)
     val id = preferencesManager.getLoginData().first
     val tipo = preferencesManager.getLoginData().second ?: ""
+    
+    // Estado para el tema oscuro
     var isDarkTheme by remember { mutableStateOf(preferencesManager.getDarkTheme()) }
+    
+    // Configuración del drawer (menú lateral)
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-
-    // Para cambiar el tema en tiempo real
     val scope = rememberCoroutineScope()
 
+    // Estructura principal con menú lateral
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
+            // Componente del menú lateral
             MenuDrawer(
                 navController = navController,
                 id = id,
@@ -46,7 +52,9 @@ fun SettingsScreen(navController: NavController) {
             )
         },
         content = {
+            // Estructura principal de la pantalla
             Scaffold(
+                // Barra superior con título y botón de menú
                 topBar = {
                     TopAppBar(
                         title = {
@@ -62,22 +70,29 @@ fun SettingsScreen(navController: NavController) {
                         colors = TopAppBarDefaults.smallTopAppBarColors(
                             containerColor = colorResource(id = R.color.fondoInicio)
                         ),
+                        // Botón de menú izquierdo
                         navigationIcon = {
                             IconButton(onClick = {
                                 scope.launch { drawerState.open() }
                             }) {
-                                Icon(imageVector = Icons.Default.Menu, contentDescription = "Menú", tint = Color.White)
+                                Icon(imageVector = Icons.Default.Menu, 
+                                     contentDescription = "Menú", 
+                                     tint = Color.White)
                             }
                         },
+                        // Botón transparente para mantener simetría
                         actions = {
                             IconButton(onClick = {
                                 scope.launch { drawerState.open() }
                             }) {
-                                Icon(imageVector = Icons.Default.Menu, contentDescription = "Menú", tint = Color.Transparent)
+                                Icon(imageVector = Icons.Default.Menu, 
+                                     contentDescription = "Menú", 
+                                     tint = Color.Transparent)
                             }
                         }
                     )
                 },
+                // Contenido principal
                 content = { paddingValues ->
                     Column(
                         modifier = Modifier
@@ -86,7 +101,7 @@ fun SettingsScreen(navController: NavController) {
                             .padding(paddingValues)
                             .padding(16.dp)
                     ) {
-                        // Sección de cambio de tema
+                        // Opción de tema oscuro
                         Text(
                             text = "Tema Oscuro",
                             fontSize = 18.sp,
@@ -94,21 +109,21 @@ fun SettingsScreen(navController: NavController) {
                             color = Color.White
                         )
 
+                        // Switch para activar/desactivar tema oscuro
                         Switch(
                             checked = isDarkTheme,
                             onCheckedChange = { isDark ->
                                 isDarkTheme = isDark
-                                preferencesManager.saveDarkTheme(isDark) // Guardamos el estado del tema
+                                preferencesManager.saveDarkTheme(isDark) 
                             },
                             modifier = Modifier.padding(start = 8.dp)
                         )
 
                         Spacer(modifier = Modifier.height(16.dp))
 
+                        // Botón de cerrar sesión
                         Button(
-                            onClick = {
-                                // Implementar lógica de cerrar sesión
-                            },
+                            onClick = { },
                             modifier = Modifier.fillMaxWidth()
                         ) {
                             Text("Cerrar Sesión")

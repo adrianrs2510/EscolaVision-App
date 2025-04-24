@@ -25,22 +25,26 @@ import retrofit2.Response
 import com.escolavision.testescolavision.R
 
 
+// Pantalla principal que muestra la información del centro educativo
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CentrosScreen(navController: NavController) {
+    // Configuración inicial y obtención de datos del usuario
     val context = LocalContext.current
     val preferencesManager = PreferencesManager(context)
     val id = preferencesManager.getLoginData().first
     val tipo = preferencesManager.getLoginData().second ?: ""
     val idCentro = preferencesManager.getCenterData()
+    
+    // Configuración del drawer (menú lateral)
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
 
-    // Usamos una variable mutable para almacenar los datos del centro
+    // Estados para manejar los datos del centro y la carga
     var centro by remember { mutableStateOf<CentroCompleto?>(null) }
     var isLoading by remember { mutableStateOf(true) }
 
-    // Cargar los datos del centro con el id
+    // Función para cargar los datos del centro desde la API
     fun loadCentro() {
         RetrofitClient.api.getCentro(id = idCentro).enqueue(object : Callback<CentroResponse> {
             override fun onResponse(call: Call<CentroResponse>, response: Response<CentroResponse>) {
@@ -56,11 +60,12 @@ fun CentrosScreen(navController: NavController) {
         })
     }
 
-    // Cargar los datos cuando el Composable se inicializa
+    // Efecto que se ejecuta cuando cambia el ID del centro
     LaunchedEffect(idCentro) {
         loadCentro()
     }
 
+    // Estructura principal de la interfaz
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
@@ -113,15 +118,12 @@ fun CentrosScreen(navController: NavController) {
                             .background(colorResource(id = R.color.fondoInicio))
                             .padding(paddingValues)
                     ) {
-                        // Centra el contenido en el centro de la pantalla
                         Column(
                             modifier = Modifier
                                 .padding(horizontal = 16.dp)
                         ) {
-                            // Título
 
 
-                            // Contenido del centro
                             centro?.let { data ->
                                 Text(
                                     text = "Datos del centro",
@@ -150,7 +152,6 @@ fun CentrosScreen(navController: NavController) {
                                 )
                                 CentroCardLocalizacion(centro!!)
                             } ?: run {
-                                // Mensaje de carga o error
                                 CircularProgressIndicator(modifier = Modifier.padding(16.dp))
                             }
                         }
@@ -161,6 +162,7 @@ fun CentrosScreen(navController: NavController) {
     )
 }
 
+// Componente que muestra la información de localización del centro
 @Composable
 fun CentroCardLocalizacion(data: CentroCompleto) {
     Card(
@@ -172,6 +174,7 @@ fun CentroCardLocalizacion(data: CentroCompleto) {
         Column(
             modifier = Modifier.padding(8.dp)
         ) {
+            // Sección de dirección
             Text(
                 text = "Dirección",
                 fontSize = 16.sp,
@@ -189,6 +192,7 @@ fun CentroCardLocalizacion(data: CentroCompleto) {
                 thickness = 1.dp,
                 modifier = Modifier.padding(vertical = 8.dp)
             )
+            // Sección de localidad
             Text(
                 text = "Localidad",
                 fontSize = 16.sp,
@@ -206,6 +210,7 @@ fun CentroCardLocalizacion(data: CentroCompleto) {
                 thickness = 1.dp,
                 modifier = Modifier.padding(vertical = 8.dp)
             )
+            // Sección de provincia
             Text(
                 text = "Provincia",
                 fontSize = 16.sp,
@@ -219,9 +224,10 @@ fun CentroCardLocalizacion(data: CentroCompleto) {
                 color = Color.Black
             )
         }
-    }}
+    }
+}
 
-
+// Componente que muestra los datos generales del centro
 @Composable
 fun CentroCardDatosCentro(data: CentroCompleto) {
     Card(
@@ -233,6 +239,7 @@ fun CentroCardDatosCentro(data: CentroCompleto) {
         Column(
             modifier = Modifier.padding(8.dp)
         ) {
+            // Sección del código del centro
             Text(
                 text = "Código del Centro",
                 fontSize = 16.sp,
@@ -250,6 +257,7 @@ fun CentroCardDatosCentro(data: CentroCompleto) {
                 thickness = 1.dp,
                 modifier = Modifier.padding(vertical = 8.dp)
             )
+            // Sección de denominación genérica
             Text(
                 text = "Denominación genérica",
                 fontSize = 16.sp,
@@ -267,6 +275,7 @@ fun CentroCardDatosCentro(data: CentroCompleto) {
                 thickness = 1.dp,
                 modifier = Modifier.padding(vertical = 8.dp)
             )
+            // Sección de denominación específica
             Text(
                 text = "Denominación del centro",
                 fontSize = 16.sp,
@@ -283,6 +292,7 @@ fun CentroCardDatosCentro(data: CentroCompleto) {
     }
 }
 
+// Componente que muestra la información de contacto del centro
 @Composable
 fun CentroCardDatosContacto(data: CentroCompleto) {
     Card(
@@ -294,6 +304,7 @@ fun CentroCardDatosContacto(data: CentroCompleto) {
         Column(
             modifier = Modifier.padding(8.dp)
         ) {
+            // Sección de teléfono principal
             Text(
                 text = "Teléfono",
                 fontSize = 16.sp,
@@ -311,6 +322,7 @@ fun CentroCardDatosContacto(data: CentroCompleto) {
                 thickness = 1.dp,
                 modifier = Modifier.padding(vertical = 8.dp)
             )
+            // Sección de teléfono secundario con manejo de nulos
             Text(
                 text = "Teléfono secundario",
                 fontSize = 16.sp,

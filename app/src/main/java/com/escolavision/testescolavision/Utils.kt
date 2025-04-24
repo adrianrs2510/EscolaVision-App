@@ -17,17 +17,25 @@ import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.io.InputStream
 
+// Archivo de utilidades que contiene funciones auxiliares para la aplicación
+
+// Importaciones necesarias para el manejo de imágenes y componentes de UI
+
 @Composable
+// Componente Composable que muestra un diálogo de alerta personalizado
+// @param message: Mensaje a mostrar en el diálogo
+// @param onDismiss: Función lambda que se ejecuta al cerrar el diálogo
 fun ShowAlertDialog(message: String, onDismiss: () -> Unit) {
     AlertDialog(
         onDismissRequest = { onDismiss() },
         title = { Text(text = "Error") },
         text = { Text(text = message) },
         confirmButton = {
+            // Botón de confirmación con estilo personalizado
             Button(
                 onClick = { onDismiss() },
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFF007AFF),
+                    containerColor = Color(0xFF007AFF), 
                     contentColor = Color.White
                 ),
                 shape = RoundedCornerShape(8.dp)
@@ -38,27 +46,36 @@ fun ShowAlertDialog(message: String, onDismiss: () -> Unit) {
     )
 }
 
-// Function to convert image to Base64 string
+// Función que convierte una imagen URI a formato Base64 con compresión adaptativa
+// @param uri: URI de la imagen a convertir
+// @param context: Contexto de la aplicación necesario para acceder al ContentResolver
+// @return String?: Cadena Base64 de la imagen o null si hay error
 fun imageToBase64(uri: Uri, context: Context): String? {
+    // Obtiene el InputStream de la imagen desde el ContentResolver
     val inputStream: InputStream? = context.contentResolver.openInputStream(uri)
     val bitmap = BitmapFactory.decodeStream(inputStream) ?: return null
 
     return try {
+        // Dimensiones máximas para la imagen redimensionada
         val maxWidth = 300
         val maxHeight = 300
+        // Redimensiona la imagen manteniendo la proporción
         val resizedImage = Bitmap.createScaledBitmap(bitmap, maxWidth, maxHeight, true)
 
         val baos = ByteArrayOutputStream()
-        var compressionQuality = 0.9f
+        var compressionQuality = 0.9f  // Calidad inicial de compresión
         var base64Image: String
 
+        // Bucle de compresión adaptativa
         do {
             baos.reset()
+            // Comprime la imagen con calidad progresivamente menor
             resizedImage.compress(Bitmap.CompressFormat.JPEG, (compressionQuality * 100).toInt(), baos)
             base64Image = Base64.encodeToString(baos.toByteArray(), Base64.DEFAULT)
-            compressionQuality -= 0.1f
+            compressionQuality -= 0.1f  // Reduce la calidad en cada iteración
         } while (base64Image.length > 20000 && compressionQuality > 0.1f)
 
+        // Verifica si se alcanzó el tamaño límite
         if (base64Image.length > 20000) {
             throw IllegalArgumentException("The image cannot be compressed enough to meet the limit.")
         }

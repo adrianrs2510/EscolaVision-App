@@ -38,19 +38,23 @@ import com.escolavision.testescolavision.R
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
+// Pantalla que muestra los detalles y preguntas de un test específico
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TestDetailScreen(navController: NavController, testId: Any) {
+    // Configuración inicial y estados
     val context = LocalContext.current
     val preferencesManager = PreferencesManager(context)
     val idUsuario = preferencesManager.getLoginData().first
     val tipoUsuario = preferencesManager.getLoginData().second ?: ""
+    
+    // Estados para manejar preguntas y respuestas
     var preguntas by remember { mutableStateOf<List<Preguntas>>(emptyList()) }
     var respuestas by remember { mutableStateOf<Map<Int, Float>>(emptyMap()) }
     var pxa by remember { mutableStateOf<List<PxA>>(emptyList()) }
     var isRefreshing by remember { mutableStateOf(false) }
 
-    // Función para cargar las preguntas
+    // Función para cargar las preguntas del test
     fun loadPreguntas() {
         isRefreshing = true
         RetrofitClient.api.getPreguntas().enqueue(object : Callback<PreguntasListResponse> {
@@ -70,7 +74,7 @@ fun TestDetailScreen(navController: NavController, testId: Any) {
 
     }
 
-    // Función para cargar las asociaciones pregunta-área
+    // Función para cargar la relación preguntas-áreas
     fun loadPxa() {
         RetrofitClient.api.getPxa().enqueue(object : Callback<PxaListResponse> {
             override fun onResponse(call: Call<PxaListResponse>, response: Response<PxaListResponse>) {
@@ -83,18 +87,22 @@ fun TestDetailScreen(navController: NavController, testId: Any) {
         })
     }
 
+    // Efecto que carga los datos iniciales
     LaunchedEffect(Unit) {
         loadPreguntas()
         loadPxa()
     }
 
-
+    // Función para calcular los resultados del test
     fun calcularResultados(): String {
+        // Mapea todas las respuestas con valor por defecto 5
         val respuestasCompletas = preguntas.associate { it.id to (respuestas[it.id] ?: 5f) }
 
+        // Calcula promedios por área
         val resultadosPorArea = mutableMapOf<Int, Float>()
         val totalPorArea = mutableMapOf<Int, Int>()
 
+        // Procesa cada respuesta y la asigna a sus áreas correspondientes
         respuestasCompletas.forEach { (idPregunta, respuesta) ->
             val areas = pxa.filter { it.idpregunta == idPregunta }.map { it.idarea }
             areas.forEach { area ->
@@ -103,6 +111,7 @@ fun TestDetailScreen(navController: NavController, testId: Any) {
             }
         }
 
+        // Calcula el promedio final para cada área
         val resultados = mutableListOf<Float>()
         for (i in 1..5) {
             val totalRespuestas = totalPorArea[i] ?: 0
@@ -113,17 +122,18 @@ fun TestDetailScreen(navController: NavController, testId: Any) {
         return resultados.joinToString(";")
     }
 
-
-    // Función para insertar el intento
+    // Función para guardar el intento en la base de datos
     fun insertarIntento() {
         val resultados = calcularResultados()
 
-        // Obtener la fecha y hora actual
+        // Obtiene la fecha y hora actual
         val now = LocalDateTime.now()
         val formatterDate = DateTimeFormatter.ofPattern("yyyy-MM-dd")
         val formatterTime = DateTimeFormatter.ofPattern("HH:mm:ss")
         val fechaActual = now.format(formatterDate)
         val horaActual = now.format(formatterTime)
+        
+        // Prepara los datos del intento
         val testIdd = Integer.parseInt(testId.toString())
         val intentoData = IntentoRequest(
             tabla = "intentos",
@@ -135,6 +145,7 @@ fun TestDetailScreen(navController: NavController, testId: Any) {
                 resultados = resultados
             )
         )
+        // Solo guarda si el usuario está registrado
         if(idUsuario.toInt() != 0) {
             RetrofitClient.api.insertarIntento(intentoData).enqueue(object : Callback<IntentoResponse> {
                     override fun onResponse(
@@ -159,7 +170,9 @@ fun TestDetailScreen(navController: NavController, testId: Any) {
         }
     }
 
+    // Estructura principal de la pantalla
     Scaffold(
+        // Barra superior con título y botones
         topBar = {
             TopAppBar(
                 title = {
@@ -187,6 +200,7 @@ fun TestDetailScreen(navController: NavController, testId: Any) {
                 }
             )
         },
+        // Contenido principal
         content = { paddingValues ->
             Column(
                 modifier = Modifier
@@ -194,16 +208,18 @@ fun TestDetailScreen(navController: NavController, testId: Any) {
                     .background(colorResource(id = R.color.fondoInicio))
                     .padding(paddingValues)
             ) {
-                // Lista de preguntas con scroll
+                // Lista de preguntas con pull-to-refresh
                 Box(modifier = Modifier.weight(1f)) {
                     SwipeRefresh(
                         state = rememberSwipeRefreshState(isRefreshing),
                         onRefresh = { loadPreguntas() }
                     ) {
+                        // Lista scrolleable de preguntas
                         LazyColumn(
                             contentPadding = PaddingValues(16.dp),
                             verticalArrangement = Arrangement.spacedBy(12.dp),
                         ) {
+                            // Cada pregunta con su slider de respuesta
                             items(preguntas) { pregunta ->
                                 Card(
                                     modifier = Modifier
@@ -272,11 +288,9 @@ fun TestDetailScreen(navController: NavController, testId: Any) {
                     }
                 }
 
-                // BOTÓN PARA ENVIAR TEST (Siempre visible)
+                // Botón para enviar el test
                 Button(
-                    onClick = {
-                        insertarIntento()
-                    },
+                    onClick = { insertarIntento() },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(16.dp)

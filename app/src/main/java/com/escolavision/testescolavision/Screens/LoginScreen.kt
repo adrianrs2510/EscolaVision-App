@@ -34,32 +34,44 @@ import retrofit2.Response
 import com.escolavision.testescolavision.R
 
 
+// Pantalla de inicio de sesión que maneja la autenticación de usuarios
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
 fun LoginScreen(navController: NavController, viewModel: LoginViewModel = viewModel()) {
+    // Configuración inicial y gestión de estado
     val context = LocalContext.current
     val preferencesManager = PreferencesManager(context)
     var showErrorDialog by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf("") }
 
+    // Diálogo de error para mostrar mensajes al usuario
     if (showErrorDialog) {
         ShowAlertDialog(message = errorMessage) { showErrorDialog = false }
     }
 
+    // Función para manejar el proceso de inicio de sesión
     fun handleLogin() {
-        // Enviar la contraseña en texto plano (no se cifra aquí)
         val loginRequest = LoginRequest(viewModel.usuario, viewModel.contraseña)
         Log.d("LoginDebug", "Usuario: ${viewModel.usuario}, Contraseña: ${viewModel.contraseña}")
+        
+        // Llamada a la API para autenticar
         RetrofitClient.api.login(loginRequest).enqueue(object : Callback<LoginResponse> {
             override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
                 Log.d("LoginDebug", "Respuesta del servidor: ${response.body()?.toString() ?: "null"}")
+                
+                // Manejo de respuesta exitosa
                 if (response.isSuccessful && response.body()?.status == "success") {
+                    // Extracción de datos del usuario
                     val id = response.body()?.id ?: 0
                     val tipo = response.body()?.tipo ?: ""
                     val is_orientador = response.body()?.is_orientador ?: 0
                     val id_centro = response.body()?.id_centro ?: ""
+                    
+                    // Guardado de datos en preferencias
                     preferencesManager.saveLogin(id, tipo, id_centro)
                     preferencesManager.saveIsOrientador(is_orientador)
+                    
+                    // Navegación según el tipo de usuario
                     if(tipo != "Profesor" || is_orientador == 1){
                         navController.navigate("home_screen") {
                             popUpTo("first_screen") { inclusive = true }
@@ -69,13 +81,14 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel = viewMo
                             popUpTo("first_screen") { inclusive = true }
                         }
                     }
-
                 } else {
+                    // Manejo de error en la respuesta
                     errorMessage = "Login fallido: ${response.body()?.message ?: "Error desconocido"}"
                     showErrorDialog = true
                 }
             }
 
+            // Manejo de error en la conexión
             override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
                 Log.d("Error de red", "" + t.message)
                 errorMessage = "Error de red: ${t.message}"
@@ -84,6 +97,7 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel = viewMo
         })
     }
 
+    // Interfaz de usuario
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -91,6 +105,7 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel = viewMo
             .navigationBarsPadding().imePadding(),
         contentAlignment = Alignment.Center
     ) {
+        // Contenido principal
         Column(
             modifier = Modifier
                 .padding(16.dp)
@@ -98,9 +113,19 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel = viewMo
                 .imePadding(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Image(painter = painterResource(id = R.drawable.logo_app), contentDescription = null, modifier = Modifier.size(128.dp))
+            // Logo de la aplicación
+            Image(painter = painterResource(id = R.drawable.logo_app), 
+                  contentDescription = null, 
+                  modifier = Modifier.size(128.dp))
+            
+            // Título de la aplicación
             Spacer(modifier = Modifier.height(16.dp))
-            Text("EscolaVision", fontSize = 36.sp, fontWeight = FontWeight.Bold, color = colorResource(id = R.color.titulos))
+            Text("EscolaVision", 
+                 fontSize = 36.sp, 
+                 fontWeight = FontWeight.Bold, 
+                 color = colorResource(id = R.color.titulos))
+            
+            // Campo de usuario
             Spacer(modifier = Modifier.height(32.dp))
             OutlinedTextField(
                 value = viewModel.usuario,
@@ -119,6 +144,8 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel = viewMo
                     unfocusedLabelColor = colorResource(id = R.color.azulBoton)
                 )
             )
+            
+            // Campo de contraseña
             Spacer(modifier = Modifier.height(8.dp))
             OutlinedTextField(
                 value = viewModel.contraseña,
@@ -138,6 +165,8 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel = viewMo
                     unfocusedLabelColor = colorResource(id = R.color.azulBoton)
                 )
             )
+            
+            // Botón de inicio de sesión
             Spacer(modifier = Modifier.height(16.dp))
             Button(
                 onClick = { handleLogin() },
@@ -147,19 +176,27 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel = viewMo
                     containerColor = colorResource(id = R.color.azulBoton)
                 ),
             ) { Text("Iniciar Sesión") }
+            
+            // Enlaces adicionales
             Spacer(modifier = Modifier.height(8.dp))
-            TextButton(onClick = { navController.navigate("register_screen") },
+            TextButton(
+                onClick = { navController.navigate("register_screen") },
                 colors = ButtonDefaults.textButtonColors(
                     contentColor = Color.Gray
                 )
             ) { Text("¿No tienes cuenta? Regístrate") }
-            TextButton(onClick = {
-                preferencesManager.saveLogin(0, "invitado", "1")
-                preferencesManager.saveIsOrientador(0)
-                navController.navigate("home_screen") {
-                    popUpTo("first_screen") { inclusive = false }
-                }
-            },
+            
+            // Botón de acceso como invitado
+            TextButton(
+                onClick = {
+                    preferencesManager.saveLogin(0, "invitado", "1")
+                    preferencesManager.saveIsOrientador(0)
+                    navController.navigate("home_screen") {
+                        popUpTo("first_screen") { inclusive = false }
+                    }
+                },
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(10.dp),
                 colors = ButtonDefaults.textButtonColors(
                     contentColor = Color.Gray
                 )

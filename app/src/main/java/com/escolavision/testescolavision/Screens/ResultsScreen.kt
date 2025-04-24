@@ -32,26 +32,33 @@ import retrofit2.Response
 import com.escolavision.testescolavision.R
 
 
+// Pantalla que muestra los resultados de los tests realizados
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ResultsScreen(navController: NavController) {
+    // Configuración inicial y obtención de datos del usuario
     val context = LocalContext.current
     val preferencesManager = PreferencesManager(context)
     val id = preferencesManager.getLoginData().first
     val tipo = preferencesManager.getLoginData().second ?: ""
     val id_centro = preferencesManager.getCenterData()
+    
+    // Configuración del drawer (menú lateral)
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
 
+    // Estados para manejar la lista de intentos y carga
     var intentos by remember { mutableStateOf<List<Intento>>(emptyList()) }
     var isLoading by remember { mutableStateOf(true) }
     val esAlumno = tipo == "Alumno"
 
+    // Función para cargar los intentos desde la API
     val loadIntentos = {
         isLoading = true
         RetrofitClient.api.getIntentos(id_centro = id_centro).enqueue(object : Callback<IntentoListResponse> {
             override fun onResponse(call: Call<IntentoListResponse>, response: Response<IntentoListResponse>) {
                 if (response.isSuccessful) {
+                    // Filtra los intentos según el tipo de usuario
                     val allIntentos = response.body()?.intentos ?: emptyList()
                     intentos = if (esAlumno) {
                         allIntentos.filter { it.idusuario == id }
@@ -68,11 +75,12 @@ fun ResultsScreen(navController: NavController) {
         })
     }
 
-    // Llamar a loadIntentos cuando se carga la pantalla por primera vez
+    // Carga inicial de datos
     LaunchedEffect(Unit) {
         loadIntentos()
     }
 
+    // Estructura principal con menú lateral
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
@@ -125,7 +133,6 @@ fun ResultsScreen(navController: NavController) {
                             .background(colorResource(id = R.color.fondoInicio))
                             .padding(paddingValues)
                     ) {
-                        // Usar SwipeRefresh para el pull-to-refresh
                         SwipeRefresh(
                             state = rememberSwipeRefreshState(isRefreshing = isLoading),
                             onRefresh = { loadIntentos() }
@@ -149,11 +156,13 @@ fun ResultsScreen(navController: NavController) {
     )
 }
 
-
+// Componente que representa un intento individual de test
 @Composable
 fun IntentoItem(intento: Intento, esAlumno: Boolean, id_centro: String, navController: NavController) {
+    // Estado para el nombre del alumno
     var alumnoNombre by remember { mutableStateOf("Cargando...") }
 
+    // Carga el nombre del alumno si el usuario no es alumno
     if (!esAlumno) {
         LaunchedEffect(intento.idusuario) {
             fetchAlumnoName(intento.idusuario, id_centro = id_centro) { nombre ->
@@ -162,6 +171,7 @@ fun IntentoItem(intento: Intento, esAlumno: Boolean, id_centro: String, navContr
         }
     }
 
+    // Tarjeta que muestra los detalles del intento
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -190,7 +200,7 @@ fun IntentoItem(intento: Intento, esAlumno: Boolean, id_centro: String, navContr
     }
 }
 
-
+// Función para obtener el nombre del alumno desde la API
 fun fetchAlumnoName(alumnoId: Int, id_centro: String, callback: (String) -> Unit) {
     RetrofitClient.api.getUsuarioData(id_centro = id_centro).enqueue(object : Callback<UsuariosListResponse> {
         override fun onResponse(call: Call<UsuariosListResponse>, response: Response<UsuariosListResponse>) {
@@ -213,6 +223,7 @@ fun fetchAlumnoName(alumnoId: Int, id_centro: String, callback: (String) -> Unit
     })
 }
 
+// Componente que muestra un gráfico de barras con los resultados
 @Composable
 fun BarChart(data: List<Int>, modifier: Modifier = Modifier) {
     val maxValue = data.maxOrNull() ?: 0
@@ -220,16 +231,19 @@ fun BarChart(data: List<Int>, modifier: Modifier = Modifier) {
     val spacing = 8.dp
     val areas = listOf("Área 1", "Área 2", "Área 3", "Área 4", "Área 5")
 
+    // Estructura del gráfico de barras
     Box(
         modifier = modifier
             .padding(16.dp)
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
+            // Barras del gráfico
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceEvenly,
                 verticalAlignment = Alignment.Bottom
             ) {
+                // Genera una barra para cada valor
                 data.forEach { value ->
                     val barHeight = (value.toFloat() / maxValue) * 100
                     Box(
@@ -241,6 +255,8 @@ fun BarChart(data: List<Int>, modifier: Modifier = Modifier) {
                     Spacer(modifier = Modifier.width(spacing))
                 }
             }
+            
+            // Etiquetas de las áreas
             Spacer(modifier = Modifier.height(8.dp))
             Row(
                 modifier = Modifier.fillMaxWidth(),

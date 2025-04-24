@@ -23,11 +23,15 @@ import kotlinx.coroutines.launch
 import com.escolavision.testescolavision.R
 
 
+// Pantalla de inicio de la aplicación que muestra la presentación inicial
 @Composable
 fun FirstScreen(navController: NavController) {
+    // Scope para manejar corrutinas
     val scope = rememberCoroutineScope()
 
+    // Tema principal de Material Design
     MaterialTheme {
+        // Columna principal que contiene todos los elementos
         Column(
             Modifier
                 .fillMaxSize()
@@ -37,6 +41,7 @@ fun FirstScreen(navController: NavController) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceBetween
         ) {
+            // Cabecera con logo e información del instituto
             Row(
                 Modifier
                     .padding(16.dp)
@@ -44,13 +49,16 @@ fun FirstScreen(navController: NavController) {
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Start
             ) {
+                // Logo del instituto
                 Image(
                     painterResource(id = R.drawable.logo_instituto),
                     contentDescription = null,
                     modifier = Modifier.size(64.dp)
                 )
                 Spacer(modifier = Modifier.width(16.dp))
+                // Información del instituto
                 Column {
+                    // Nombre del instituto
                     Text(
                         "IES Politécnico Hermenegildo Lanz",
                         style = MaterialTheme.typography.headlineSmall.copy(
@@ -59,6 +67,7 @@ fun FirstScreen(navController: NavController) {
                             color = colorResource(id = R.color.titulos)
                         )
                     )
+                    // Ubicación del instituto
                     Text(
                         "Granada",
                         style = MaterialTheme.typography.bodyLarge.copy(
@@ -68,6 +77,8 @@ fun FirstScreen(navController: NavController) {
                     )
                 }
             }
+
+            // Sección central con logo y título de la aplicación
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,
@@ -75,11 +86,13 @@ fun FirstScreen(navController: NavController) {
                     .fillMaxWidth()
                     .padding(vertical = 16.dp)
             ) {
+                // Logo de la aplicación
                 Image(
                     painterResource(id = R.drawable.logo_app),
                     contentDescription = null,
                     modifier = Modifier.size(256.dp)
                 )
+                // Título de la aplicación
                 Text(
                     "EscolaVision",
                     style = MaterialTheme.typography.displaySmall.copy(
@@ -88,6 +101,7 @@ fun FirstScreen(navController: NavController) {
                         color = colorResource(id = R.color.titulos)
                     )
                 )
+                // Subtítulo de la aplicación
                 Text(
                     "Tu App de Orientación Escolar",
                     style = MaterialTheme.typography.headlineMedium.copy(
@@ -97,14 +111,21 @@ fun FirstScreen(navController: NavController) {
                     )
                 )
             }
+
+            // Botón de navegación
             IconButton(
                 onClick = {
                     scope.launch {
+                        // Obtiene el contexto y las preferencias del usuario
                         val context = navController.context
                         val preferencesManager = PreferencesManager(context)
+                        
+                        // Verifica si el usuario está logueado y redirige según su tipo
                         if (preferencesManager.isLoggedIn()) {
                             val (id, tipo) = preferencesManager.getLoginData()
                             val is_orientador = preferencesManager.getIsOrientador()
+                            
+                            // Redirige según el tipo de usuario
                             if(tipo == "Alumno" || is_orientador == 1 || tipo == "invitado"){
                                 navController.navigate("home_screen") {
                                     popUpTo("first_screen") { inclusive = true }
@@ -115,6 +136,7 @@ fun FirstScreen(navController: NavController) {
                                 }
                             }
                         } else {
+                            // Si no está logueado, redirige a la pantalla de login
                             navController.navigate("login_screen") {
                                 popUpTo("first_screen") { inclusive = true }
                             }
@@ -125,6 +147,7 @@ fun FirstScreen(navController: NavController) {
                     .padding(16.dp)
                     .size(120.dp)
             ) {
+                // Icono de flecha para avanzar
                 Icon(
                     painter = painterResource(id = R.drawable.ic_arrow_forward),
                     contentDescription = "Go to next screen",

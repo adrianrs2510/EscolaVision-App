@@ -44,24 +44,28 @@ import retrofit2.Response
 import com.escolavision.testescolavision.R
 
 
+// Pantalla de perfil que muestra y permite editar la información del usuario
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileScreen(navController: NavController) {
+    // Configuración inicial y estados
     val context = LocalContext.current
     val preferencesManager = PreferencesManager(context)
     val id = preferencesManager.getLoginData().first
     val tipo = preferencesManager.getLoginData().second ?: ""
     val id_centro = preferencesManager.getCenterData()
+    
+    // Estados para manejar la UI y los datos
     var user by remember { mutableStateOf<Usuarios?>(null) }
     var isLoading by remember { mutableStateOf(true) }
     var showEditDialog by remember { mutableStateOf(false) }
+    var isRefreshing by remember { mutableStateOf(false) }
+    
+    // Configuración del drawer
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
 
-    // Estado para el SwipeRefresh
-    var isRefreshing by remember { mutableStateOf(false) }
-
-    // Función para cargar los datos del usuario
+    // Función para cargar los datos del usuario desde la API
     fun loadUserData() {
         val userId = id
         if (false) {
@@ -93,30 +97,37 @@ fun ProfileScreen(navController: NavController) {
                 } else {
                     Toast.makeText(context, "Fallo al cargar los datos del usuario", Toast.LENGTH_SHORT).show()
                 }
-                isRefreshing = false // Termina el proceso de recarga
+                isRefreshing = false 
             }
 
             override fun onFailure(call: Call<UsuariosListResponse>, t: Throwable) {
                 isLoading = false
-                isRefreshing = false // Termina el proceso de recarga
+                isRefreshing = false 
                 Log.d("ProfileScreen", "onFailure: ${t.message}")
                 Toast.makeText(context, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
             }
         })
     }
 
-    // Llama a loadUserData cuando se recarga la pantalla
+    // Efecto que carga los datos al iniciar la pantalla
     LaunchedEffect(id) {
         loadUserData()
     }
 
+    // Diálogo de edición de perfil
     if (showEditDialog) {
-        EditProfileDialog(user = user, onDismiss = { showEditDialog = false }, onSave = { updatedUser ->
-            showEditDialog = false
-            handleProfileUpdate(updatedUser, context, navController, ::loadUserData)
-        }, id = id.toString())
+        EditProfileDialog(
+            user = user,
+            onDismiss = { showEditDialog = false },
+            onSave = { updatedUser ->
+                showEditDialog = false
+                handleProfileUpdate(updatedUser, context, navController, ::loadUserData)
+            },
+            id = id.toString()
+        )
     }
 
+    // Estructura principal con menú lateral
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
@@ -130,12 +141,11 @@ fun ProfileScreen(navController: NavController) {
             )
         },
         content = {
-            // Envuelve el contenido con SwipeRefresh
             SwipeRefresh(
                 state = rememberSwipeRefreshState(isRefreshing),
                 onRefresh = {
                     isRefreshing = true
-                    loadUserData() // Recarga los datos al hacer swipe
+                    loadUserData() 
                 }
             ) {
                 Scaffold(
@@ -279,27 +289,29 @@ fun ProfileScreen(navController: NavController) {
 }
 
 
+// Diálogo para editar el perfil del usuario
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditProfileDialog(user: Usuarios?, onDismiss: () -> Unit, onSave: (Usuarios) -> Unit, id: String) {
-
+    // Validación inicial
     if (user == null) {
-        // Handle the case where user is null (e.g., show an error or return early)
         return
     }
 
+    // Selector de imágenes para la foto de perfil
     val imagePickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri ->
-        uri?.let { user.foto = it.toString() } // Asegura que la imagen se actualice correctamente
+        uri?.let { user.foto = it.toString() }
     }
 
-
+    // Estados para los campos editables
     var nombre by remember { mutableStateOf(user.nombre) }
     var foto by remember { mutableStateOf(user.foto) }
     var edad by remember { mutableStateOf(user.fecha_nacimiento) }
     var contraseña by remember { mutableStateOf("") }
 
+    // Estructura del diálogo
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text(text = "Editar Perfil") },
@@ -323,7 +335,7 @@ fun EditProfileDialog(user: Usuarios?, onDismiss: () -> Unit, onSave: (Usuarios)
                     value = contraseña,
                     onValueChange = { contraseña = it },
                     label = { Text(text = "Introduce nueva Contraseña") },
-                    visualTransformation = PasswordVisualTransformation(),  // Esto oculta el texto
+                    visualTransformation = PasswordVisualTransformation(),
                     modifier = Modifier.fillMaxWidth()
                 )
 
@@ -333,7 +345,6 @@ fun EditProfileDialog(user: Usuarios?, onDismiss: () -> Unit, onSave: (Usuarios)
         },
         confirmButton = {
             TextButton(onClick = {
-                // Create a new Datos object with the updated values
                 val updatedUser = user.copy(
                     nombre = nombre,
                     foto = foto,
@@ -354,23 +365,27 @@ fun EditProfileDialog(user: Usuarios?, onDismiss: () -> Unit, onSave: (Usuarios)
     )
 }
 
+// Función para manejar la actualización del perfil
 private fun handleProfileUpdate(
     updatedUser: Usuarios,
     context: Context,
     navController: NavController,
-    loadUserData: () -> Unit // Añadir esta línea
+    loadUserData: () -> Unit 
 ) {
+    // Validación de campos requeridos
     if (updatedUser.nombre.isBlank() || updatedUser.fecha_nacimiento.isBlank()) {
         Toast.makeText(context, "Todos los campos son requeridos", Toast.LENGTH_SHORT).show()
         return
     }
 
+    // Validación del tamaño de la imagen
     val base64Image = updatedUser.foto
     if (base64Image != null && base64Image.length > 20000) {
         Toast.makeText(context, "Imagen demasiado grande", Toast.LENGTH_SHORT).show()
         return
     }
 
+    // Preparación de la solicitud de actualización
     val updateRequest = UpdateRequest(
         datos = Usuarios(
             id = updatedUser.id,
@@ -387,11 +402,13 @@ private fun handleProfileUpdate(
         tabla = "usuarios",
         id = updatedUser.id
     )
+
+    // Llamada a la API para actualizar el perfil
     RetrofitClient.api.update(updateRequest).enqueue(object : Callback<UpdateProfileResponse> {
         override fun onResponse(call: Call<UpdateProfileResponse>, response: Response<UpdateProfileResponse>) {
             if (response.isSuccessful && response.message() == "OK") {
                 Toast.makeText(context, "Perfil actualizado con éxito", Toast.LENGTH_SHORT).show()
-                loadUserData() // Aquí llamamos a loadUserData() para recargar el perfil
+                loadUserData()
             } else {
                 Toast.makeText(context, "Error al actualizar el perfil", Toast.LENGTH_SHORT).show()
             }

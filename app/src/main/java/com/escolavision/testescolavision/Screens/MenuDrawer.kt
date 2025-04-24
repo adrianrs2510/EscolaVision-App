@@ -22,27 +22,31 @@ import kotlinx.coroutines.launch
 import com.escolavision.testescolavision.R
 
 
+// Componente del menú lateral que proporciona navegación principal de la aplicación
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MenuDrawer(
-    navController: NavController,
-    id: Int,
-    tipo: String,
-    scope: CoroutineScope,
-    drawerState: DrawerState,
-    preferencesManager: PreferencesManager
+    navController: NavController,      // Controlador de navegación
+    id: Int,                          // ID del usuario actual
+    tipo: String,                     // Tipo de usuario (Alumno, Profesor, invitado)
+    scope: CoroutineScope,            // Scope para operaciones coroutine
+    drawerState: DrawerState,         // Estado del drawer
+    preferencesManager: PreferencesManager // Gestor de preferencias
 ) {
+    // Configuración del panel lateral
     ModalDrawerSheet(
         modifier = Modifier
             .width(250.dp)
             .background(colorResource(id = R.color.fondoInicio))
     ) {
+        // Contenedor principal de opciones del menú
         Column(
             modifier = Modifier
                 .fillMaxHeight()
                 .background(colorResource(id = R.color.fondoInicio))
                 .padding(16.dp)
         ) {
+            // Opción de Tests - Solo visible para alumnos, invitados y orientadores
             if (tipo == "Alumno" || tipo == "invitado" || preferencesManager.getIsOrientador() == 1) {
                 MenuButton("Tests") {
                     navController.navigate("home_screen")
@@ -50,11 +54,13 @@ fun MenuDrawer(
                 }
             }
 
+            // Opción de Áreas - Visible para todos los usuarios
             MenuButton("Áreas") {
                 navController.navigate("areas_screen")
                 scope.launch { drawerState.close() }
             }
 
+            // Opción de Alumnos - Solo visible para profesores
             if (tipo == "Profesor") {
                 MenuButton("Alumnos") {
                     navController.navigate("students_screen")
@@ -62,16 +68,19 @@ fun MenuDrawer(
                 }
             }
 
+            // Opción de Perfil - Visible para todos los usuarios
             MenuButton("Perfil") {
                 navController.navigate("profile_screen")
                 scope.launch { drawerState.close() }
             }
 
+            // Opción de Mi Centro - Visible para todos los usuarios
             MenuButton("Mi Centro") {
                 navController.navigate("centros_screen")
                 scope.launch { drawerState.close() }
             }
 
+            // Opción de Resultados - No visible para usuarios invitados
             if(tipo != "invitado"){
                 MenuButton("Resultados") {
                     navController.navigate("results_screen")
@@ -79,21 +88,16 @@ fun MenuDrawer(
                 }
             }
 
-            /*MenuButton("Configuración") {
-                navController.navigate("settings_screen")
-                scope.launch { drawerState.close() }
-            }*/
+            // Opción de Ayuda - Visible para todos los usuarios
             MenuButton("Ayuda") {
                 navController.navigate("help_screen")
                 scope.launch { drawerState.close() }
             }
-            /*MenuButton("Acerca de") {
-                navController.navigate("about_screen")
-                scope.launch { drawerState.close() }
-            }*/
 
+            // Espaciador flexible para empujar el botón de cerrar sesión al fondo
             Spacer(modifier = Modifier.weight(1f))
 
+            // Botón de cerrar sesión
             Button(
                 onClick = {
                     preferencesManager.clearLogin()
@@ -118,6 +122,7 @@ fun MenuDrawer(
     }
 }
 
+// Componente reutilizable para botones del menú
 @Composable
 fun MenuButton(label: String, onClick: () -> Unit) {
     Button(
